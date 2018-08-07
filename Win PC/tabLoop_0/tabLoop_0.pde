@@ -14,7 +14,9 @@ void setup() {
 
 }
 
-
+ // comentario
+ 
+ 
 void draw() {
   background(0);
 
@@ -39,6 +41,7 @@ void keyPressed() {
   if (keyCode == UP) {
 
   }
+<<<<<<< HEAD
 
 }
 
@@ -59,4 +62,13 @@ void crearControles(){
     .setSliderMode(Slider.FLEXIBLE)
     .snapToTickMarks(false);
     
+=======
+  println(tabla.stepDeformCoeficiente);
+   tabla.detectarTocarEsquinas(mouseX, mouseY);
+}
+
+int func() {
+  
+  
+>>>>>>> 63c8a7b02a7daed5a15656d47c6453c40499370a
 }
