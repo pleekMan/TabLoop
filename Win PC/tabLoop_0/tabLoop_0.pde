@@ -41,11 +41,11 @@ void keyPressed() {
   if (keyCode == UP) {
 
   }
-<<<<<<< HEAD
 
 }
 
 void correccionPerspectiva(float value) {
+  // CALLBACK PARA Slider DE BEZIER MIDPOINT
   tabla.bezierMidPoint.x = map(value, -1, 1, 0, 1);
   tabla.ordenarTrackSteps();
 }
@@ -62,13 +62,5 @@ void crearControles(){
     .setSliderMode(Slider.FLEXIBLE)
     .snapToTickMarks(false);
     
-=======
-  println(tabla.stepDeformCoeficiente);
-   tabla.detectarTocarEsquinas(mouseX, mouseY);
-}
 
-int func() {
-  
-  
->>>>>>> 63c8a7b02a7daed5a15656d47c6453c40499370a
 }
