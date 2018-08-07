@@ -3,18 +3,19 @@ class TablaVirtual {
   PVector[] cornerPoints; // EVERYTHING NORMALIZED
   PVector[][] trackStepPos; // [TRACK][STEP]
   PVector midPoint = new PVector(0.5, 0.5);
+  //PVector gridOffset = new PVector(0.025,0.05);
   int atStep;
 
   boolean calibrationMode = true;
   int selectedCorner = 0;
   boolean draggingCorner = false;
-  PVector stepDeformCoeficiente;
+  float stepDeformCoeficiente;
 
   public TablaVirtual() {
 
     int tracks = 10;
     int steps = 16;
-    stepDeformCoeficiente = new PVector(1, 1);
+    stepDeformCoeficiente = 1;
 
 
     cornerPoints = new PVector[4];
@@ -77,19 +78,23 @@ class TablaVirtual {
 
     // for each (Track for each (step))
     for (int track=0; track < trackStepPos.length; track++) {
-      float normalizedTrackNumber = float(track) /  trackStepPos.length;
+      float normalizedTrackNumber = float(track) /  (trackStepPos.length -1);
       PVector trackLeft = PVector.lerp(cornerPoints[0], cornerPoints[3], normalizedTrackNumber);
       PVector trackRight = PVector.lerp(cornerPoints[1], cornerPoints[2], normalizedTrackNumber);
 
       for (int step=0; step < trackStepPos[0].length; step++) {
-        float normalizedStepNumber = float(step) /  trackStepPos[0].length;
+        float normalizedStepNumber = float(step) /  (trackStepPos[0].length - 1);
 
-        PVector stepPos = PVector.lerp(trackLeft, trackRight, normalizedStepNumber);
+        PVector stepPos = new PVector();// = PVector.lerp(trackLeft, trackRight, normalizedStepNumber);
         //float x = 2 * (1 - (normalizedStepNumber)) * (normalizedStepNumber) * 0.5 + pow((normalizedStepNumber), 2) * 1;
-        stepPos.x = pow(map(stepPos.x,0,1,trackLeft.x, trackRight.x), 2 * stepDeformCoeficiente.x);
-        BUSCAR CURVA BEZIER DE SEGUNDO GRADO (1 CONTROL POINT)
 
-        //stepPos.set();
+        //stepPos.x = (pow(1-normalizedStepNumber, 2) * trackLeft.x) + (2*(1-normalizedStepNumber)*normalizedStepNumber*midPoint.x) + ((normalizedStepNumber*normalizedStepNumber) * trackRight.x);
+        stepPos.x = (pow(1-normalizedStepNumber, 2) * trackLeft.x) + (2*(1-normalizedStepNumber)*normalizedStepNumber*midPoint.x) + ((normalizedStepNumber*normalizedStepNumber) * trackRight.x);
+        stepPos.y = lerp(trackLeft.y,trackRight.y,normalizedStepNumber);
+        //stepPos.y = (pow(1-normalizedStepNumber, 2) * trackLeft.y) + (2*(1-normalizedStepNumber)*normalizedStepNumber*lerp(trackLeft.y,trackRight.y,normalizedStepNumber)) + ((normalizedStepNumber*normalizedStepNumber) * trackRight.y);
+        //stepPos.y = (pow(1-stepPos.y, 2) * trackLeft.y) + (2*(1-stepPos.y)*stepPos.y*midPoint.y) + ((stepPos.y*stepPos.y) * trackRight.y);
+
+        //stepPos.add(gridOffset);
         trackStepPos[track][step] = stepPos;
       }
     }
