@@ -1,24 +1,26 @@
+import controlP5.*;
+
 
 TablaVirtual tabla;
+
+ControlP5 controles;
 
 void setup() {
   size(700, 500);
   tabla = new TablaVirtual();
+
+  controles = new ControlP5(this);
+  crearControles();
+
 }
 
 
 void draw() {
   background(0);
 
-  
-  //tabla.stepDeformCoeficiente = map(mouseX, 0, width, 0, 2);
-  tabla.midPoint.set((float)mouseX / width, (float)mouseY / height);
-  tabla.ordenarTrackSteps();
-  
+
   tabla.update();
   tabla.render();
-  
-  text(tabla.stepDeformCoeficiente, 10,10);
 }
 
 
@@ -32,11 +34,29 @@ void mouseReleased() {
 
 void keyPressed() {
   if (keyCode == DOWN) {
-    tabla.stepDeformCoeficiente -= 0.1;
+
   }
   if (keyCode == UP) {
-    tabla.stepDeformCoeficiente += 0.1;
+
   }
-  println(tabla.stepDeformCoeficiente);
-   tabla.detectarTocarEsquinas(mouseX, mouseY);
+
+}
+
+void correccionPerspectiva(float value) {
+  tabla.bezierMidPoint.x = map(value, -1, 1, 0, 1);
+  tabla.ordenarTrackSteps();
+}
+
+void crearControles(){
+  
+  controles.addSlider("correccionPerspectiva")
+    .setLabel("PERPECTIVA")
+    .setPosition(20, height - 50)
+    .setWidth(200)
+    .setRange(-1, 1)
+    .setValue(0)
+    .setNumberOfTickMarks(9)
+    .setSliderMode(Slider.FLEXIBLE)
+    .snapToTickMarks(false);
+    
 }

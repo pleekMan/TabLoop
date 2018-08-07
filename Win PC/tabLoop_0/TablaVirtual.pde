@@ -2,20 +2,20 @@ class TablaVirtual {
 
   PVector[] cornerPoints; // EVERYTHING NORMALIZED
   PVector[][] trackStepPos; // [TRACK][STEP]
-  PVector midPoint = new PVector(0.5, 0.5);
+  PVector bezierMidPoint = new PVector(0.5, 0.5);
   //PVector gridOffset = new PVector(0.025,0.05);
   int atStep;
 
   boolean calibrationMode = true;
   int selectedCorner = 0;
   boolean draggingCorner = false;
-  float stepDeformCoeficiente;
+  
+  PImage camImage;
 
   public TablaVirtual() {
 
     int tracks = 10;
     int steps = 16;
-    stepDeformCoeficiente = 1;
 
 
     cornerPoints = new PVector[4];
@@ -30,6 +30,9 @@ class TablaVirtual {
 
 
     atStep = 0;
+    
+    camImage = loadImage("BWgrid.png");
+    
   }
 
   void update() {
@@ -38,11 +41,15 @@ class TablaVirtual {
       cornerPoints[selectedCorner].set( (float)mouseX / width, (float)mouseY / height);
       ordenarTrackSteps();
     }
+    
+     sampleImage();
   }
 
 
   void render() {
-
+    
+    image(camImage,0,0);
+    
     if (calibrationMode) {
       // DIBUJAR PUNTOS
       noStroke();
@@ -51,26 +58,43 @@ class TablaVirtual {
           float xPos = trackStepPos[track][step].x * width;
           float yPos = trackStepPos[track][step].y * height;
 
-          fill(255, 255, 0);
+          fill(colorearPuntos(track,step));
           ellipse(xPos, yPos, 5, 5);
 
-          fill(127);
-          text(track + "|" + step, xPos + 5, yPos);
+          
+          if(trackStepPos[track][step].z >= 0.99){
+            fill(0,255,0);
+          ellipse(xPos, yPos, 7,7);
+          }
+          
+          fill(0,0,255);
+          text(trackStepPos[track][step].z, xPos + 5, yPos);
         }
       }
 
       // DIBUJAR CORNER GIZMOS
       noFill();
       stroke(0, 255, 255);
-      ellipse(cornerPoints[0].x * width, cornerPoints[0].y * height, 5, 5);
       ellipse(cornerPoints[0].x * width, cornerPoints[0].y * height, 15, 15);
-      ellipse(cornerPoints[1].x * width, cornerPoints[1].y * height, 5, 5);
       ellipse(cornerPoints[1].x * width, cornerPoints[1].y * height, 15, 15);
-      ellipse(cornerPoints[2].x * width, cornerPoints[2].y * height, 5, 5);
       ellipse(cornerPoints[2].x * width, cornerPoints[2].y * height, 15, 15);
-      ellipse(cornerPoints[3].x * width, cornerPoints[3].y * height, 5, 5);
       ellipse(cornerPoints[3].x * width, cornerPoints[3].y * height, 15, 15);
     }
+  }
+  
+  void sampleImage(){
+    
+     for (int track=0; track < trackStepPos.length; track++) {
+        for (int step=0; step < trackStepPos[0].length; step++) {
+          
+          //float pixelSlot = trackStepPos[track][step].x + (trackStepPos[track][step].y * 1);
+          int pixelSlot = (int(trackStepPos[track][step].x) * camImage.width) + (((int(trackStepPos[track][step].y) * camImage.width ) * camImage.width));
+          float b = brightness(camImage.pixels[pixelSlot]);
+          
+          trackStepPos[track][step].z = map(b,0,255,1,0);
+          
+        }
+     }
   }
 
   void ordenarTrackSteps() {
@@ -78,7 +102,7 @@ class TablaVirtual {
 
     // for each (Track for each (step))
     for (int track=0; track < trackStepPos.length; track++) {
-      float normalizedTrackNumber = float(track) /  (trackStepPos.length -1);
+      float normalizedTrackNumber = float(track) /  (trackStepPos.length - 1);
       PVector trackLeft = PVector.lerp(cornerPoints[0], cornerPoints[3], normalizedTrackNumber);
       PVector trackRight = PVector.lerp(cornerPoints[1], cornerPoints[2], normalizedTrackNumber);
 
@@ -86,15 +110,21 @@ class TablaVirtual {
         float normalizedStepNumber = float(step) /  (trackStepPos[0].length - 1);
 
         PVector stepPos = new PVector();// = PVector.lerp(trackLeft, trackRight, normalizedStepNumber);
-        //float x = 2 * (1 - (normalizedStepNumber)) * (normalizedStepNumber) * 0.5 + pow((normalizedStepNumber), 2) * 1;
 
         //stepPos.x = (pow(1-normalizedStepNumber, 2) * trackLeft.x) + (2*(1-normalizedStepNumber)*normalizedStepNumber*midPoint.x) + ((normalizedStepNumber*normalizedStepNumber) * trackRight.x);
-        stepPos.x = (pow(1-normalizedStepNumber, 2) * trackLeft.x) + (2*(1-normalizedStepNumber)*normalizedStepNumber*midPoint.x) + ((normalizedStepNumber*normalizedStepNumber) * trackRight.x);
-        stepPos.y = lerp(trackLeft.y,trackRight.y,normalizedStepNumber);
+        stepPos.x = (pow(1-normalizedStepNumber, 2) * trackLeft.x) + (2*(1-normalizedStepNumber)*normalizedStepNumber*bezierMidPoint.x) + ((normalizedStepNumber*normalizedStepNumber) * trackRight.x);
+        //stepPos.y = lerp(trackLeft.y, trackRight.y, normalizedStepNumber);
+        stepPos.y = lerp(trackLeft.y, trackRight.y, stepPos.x);
         //stepPos.y = (pow(1-normalizedStepNumber, 2) * trackLeft.y) + (2*(1-normalizedStepNumber)*normalizedStepNumber*lerp(trackLeft.y,trackRight.y,normalizedStepNumber)) + ((normalizedStepNumber*normalizedStepNumber) * trackRight.y);
         //stepPos.y = (pow(1-stepPos.y, 2) * trackLeft.y) + (2*(1-stepPos.y)*stepPos.y*midPoint.y) + ((stepPos.y*stepPos.y) * trackRight.y);
 
-        //stepPos.add(gridOffset);
+        /*
+        if (track == 0) {
+         //rect((stepPos.y  * width - 5), (stepPos.y * height - 5) , 10,10);
+         text(stepPos.y,(stepPos.x  * width - 5), (stepPos.y * height - 5));
+         }
+         */
+
         trackStepPos[track][step] = stepPos;
       }
     }
@@ -115,6 +145,17 @@ class TablaVirtual {
       }
     }
     return false;
+  }
+
+
+  private color colorearPuntos(int track, int step) {
+
+    // CORNER POINTS SON ROJOS. TODO LO DEMAS, BLANCO
+    if ((track == 0 && step ==0) || (track == trackStepPos.length - 1 && step ==0) || (track == 0 &&  step == trackStepPos[0].length - 1) || (track == trackStepPos.length - 1 && step == trackStepPos[0].length - 1)) {
+      return color (255, 0, 0);
+    } else {
+      return color (255);
+    }
   }
 }
 
