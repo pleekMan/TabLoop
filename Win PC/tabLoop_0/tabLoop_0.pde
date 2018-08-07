@@ -6,7 +6,9 @@ void setup() {
   tabla = new TablaVirtual();
 }
 
-
+ // comentario
+ 
+ 
 void draw() {
   background(0);
 
@@ -39,4 +41,9 @@ void keyPressed() {
   }
   println(tabla.stepDeformCoeficiente);
    tabla.detectarTocarEsquinas(mouseX, mouseY);
+}
+
+int func() {
+  
+  
 }
