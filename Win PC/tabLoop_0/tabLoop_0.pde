@@ -6,7 +6,7 @@ TablaVirtual tabla;
 ControlP5 controles;
 
 void setup() {
-  size(700, 500);
+  size(700,700);
   tabla = new TablaVirtual();
 
   controles = new ControlP5(this);
@@ -47,7 +47,7 @@ void keyPressed() {
 void correccionPerspectiva(float value) {
   // CALLBACK PARA Slider DE BEZIER MIDPOINT
   tabla.bezierMidPoint.x = map(value, -1, 1, 0, 1);
-  tabla.ordenarTrackSteps();
+  tabla.ordenarBeatGrid();
 }
 
 void crearControles(){
