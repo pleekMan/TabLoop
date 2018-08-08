@@ -1,17 +1,18 @@
 class TablaVirtual { //<>//
 
-  PVector [] boundingBox; // topLeft y bottomRight points, in screenSpace. Should fit the camera image
+  PVector [] boundingBox; // topLeft y bottomRight points, in screenSpace. Should fit the camera image.
   PVector[] cornerPoints; // EVERYTHING NORMALIZED
-  PVector[][] beatGrid; // [TRACK][STEP]
+  PVector[][] beatGrid; // [TRACK][STEP] NORMALIZED // Z COMPONENT IS USED TO AS BINARY ON/OFF
   PVector bezierMidPoint = new PVector(0.5, 0.5);
   //PVector gridOffset = new PVector(0.025,0.05);
-  int atStep;
 
   boolean calibrationMode = true;
-  int selectedCorner = 0;
-  boolean draggingCorner = false;
+  int selectedGridCorner = 0;
+  int selectedBoxCorner = 0;
+  boolean draggingGridCorner = false;
+  boolean draggingBoxCorner = false;
 
-  PImage camImage;
+  int atStep;
 
   public TablaVirtual() {
 
@@ -27,10 +28,10 @@ class TablaVirtual { //<>//
     boundingBox[0].add(20, 20, 0);
     boundingBox[1].add(20, 20, 0);
 
-    cornerPoints[0] = new PVector(0, 0);
-    cornerPoints[1] = new PVector(1, 0);
-    cornerPoints[2] = new PVector(1, 1);
-    cornerPoints[3] = new PVector(0, 1);
+    cornerPoints[0] = new PVector(0.1, 0.1);
+    cornerPoints[1] = new PVector(0.9, 0.1);
+    cornerPoints[2] = new PVector(0.9, 0.9);
+    cornerPoints[3] = new PVector(0.1, 0.9);
 
     //cornerPoints[0] = new PVector(0.1, 0.1);
     //cornerPoints[1] = new PVector(0.9, 0.1);
@@ -41,25 +42,27 @@ class TablaVirtual { //<>//
 
 
     atStep = 0;
-
-    camImage = loadImage("BWgrid.png");
   }
 
   public void update() {
 
-    if (draggingCorner) {
-      PVector posInsideBoundingBox = new PVector();
-      cornerPoints[selectedCorner].set(fitToBoundingBoxNormalized(new PVector(mouseX, mouseY)));
+    if (draggingGridCorner) {
+      // CONSTRAINING mouse MOTION TO boundingBox, BEFORE CONVERTING TO BBOX NORMALIZED
+      PVector screenPoint = new PVector(constrain(mouseX, boundingBox[0].x, boundingBox[1].x), constrain(mouseY, boundingBox[0].y, boundingBox[1].y));
+      cornerPoints[selectedGridCorner].set(fitToBoundingBoxNormalized(screenPoint));
       ordenarBeatGrid();
     }
 
-    //sampleImage();
+    if (draggingBoxCorner) {
+      boundingBox[selectedBoxCorner].set(mouseX, mouseY);
+      ordenarBeatGrid();
+    }
+
   }
 
 
   public void render() {
 
-    //image(camImage, 0, 0);
 
     if (calibrationMode) {
 
@@ -68,50 +71,32 @@ class TablaVirtual { //<>//
       rect(boundingBox[0].x, boundingBox[0].y, boundingBox[1].x - boundingBox[0].x, boundingBox[1].y - boundingBox[0].y);
 
       // DIBUJAR PUNTOS EN GRILLA
-
       noStroke();
       for (int track=0; track < beatGrid.length; track++) {
         for (int step=0; step < beatGrid[0].length; step++) {
 
           PVector pointInScreen = fitToBoundingBoxScreen(beatGrid[track][step]);
-
+          
+          // gridPoints COLOR
           fill(colorearPuntos(track, step));
           ellipse(pointInScreen.x, pointInScreen.y, 5, 5);
 
-
-          if (beatGrid[track][step].z >= 0.99) {
+          // gridPoints BEAT ON
+          if (beatGrid[track][step].z >= 0.1) {
             fill(0, 255, 0);
-            ellipse(pointInScreen.x, pointInScreen.y, 7, 7);
+            ellipse(pointInScreen.x, pointInScreen.y, 10, 10);
           }
-
-          //fill(0, 0, 255);
-          //text(trackStepPos[track][step].z, xPos + 5, yPos);
         }
       }
-
-
 
       // DIBUJAR CORNER GIZMOS
       dibujarCornerGizmos();
     }
   }
 
-  void sampleImage() {
 
-    for (int track=0; track < beatGrid.length; track++) {
-      for (int step=0; step < beatGrid[0].length; step++) {
-
-        //float pixelSlot = trackStepPos[track][step].x + (trackStepPos[track][step].y * 1);
-        int pixelSlot = (int(beatGrid[track][step].x) * camImage.width) + (((int(beatGrid[track][step].y) * camImage.width ) * camImage.width));
-        float b = brightness(camImage.pixels[pixelSlot]);
-
-        beatGrid[track][step].z = map(b, 0, 255, 1, 0);
-      }
-    }
-  }
 
   void ordenarBeatGrid() {
-
 
     // for each (Track for each (step))
     for (int track=0; track < beatGrid.length; track++) {
@@ -136,15 +121,29 @@ class TablaVirtual { //<>//
 
 
 
-  public boolean detectarTocarEsquinas(float x, float y) {
+  public boolean detectarTocarEsquinasGrid(float x, float y) {
 
     for (int i=0; i < cornerPoints.length; i++) {
       // MAP FUNCTION ALSO EXTRAPOLATES (VALUES OUTSIDE RANGES WILL GIVE CORRECT RESULTS)
       PVector pointInScreen = fitToBoundingBoxScreen(cornerPoints[i]); 
       if ( dist(x, y, pointInScreen.x, pointInScreen.y) < 10 ) {
-        selectedCorner = i;
-        draggingCorner = true;
+        selectedGridCorner = i;
+        draggingGridCorner = true;
         println("Click on CornerPoint: " + i);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean detectarTocarEsquinasBox(float x, float y) {
+
+    for (int i=0; i < boundingBox.length; i++) {
+      // MAP FUNCTION ALSO EXTRAPOLATES (VALUES OUTSIDE RANGES WILL GIVE CORRECT RESULTS)
+      if ( dist(x, y, boundingBox[i].x, boundingBox[i].y) < 10 ) {
+        selectedBoxCorner = i;
+        draggingBoxCorner = true;
+        println("Click on BoxPoint: " + i);
         return true;
       }
     }
@@ -170,6 +169,7 @@ class TablaVirtual { //<>//
     noFill();
     stroke(0, 255, 255);
 
+    // GRID CORNERS
     float[][] vizCorners = new float[4][2];
     for (int i=0; i < vizCorners.length; i++) {
       vizCorners[i][0] = map(cornerPoints[i].x, 0, 1, boundingBox[0].x, boundingBox[1].x);
@@ -177,16 +177,22 @@ class TablaVirtual { //<>//
 
       ellipse(vizCorners[i][0], vizCorners[i][1], 15, 15);
     }
+
+    // BOUNDING BOX CORNERS
+    stroke(0, 200, 255);
+    ellipse(boundingBox[0].x, boundingBox[0].y, 15, 15);
+    ellipse(boundingBox[1].x, boundingBox[1].y, 15, 15);
   }
 
 
   private color colorearPuntos(int track, int step) {
 
     // CORNER POINTS SON ROJOS. TODO LO DEMAS, BLANCO
+    
     if ((track == 0 && step ==0) || (track == beatGrid.length - 1 && step ==0) || (track == 0 &&  step == beatGrid[0].length - 1) || (track == beatGrid.length - 1 && step == beatGrid[0].length - 1)) {
-      return color (255, 255, 0);
+      return color (255, 0, 0);
     } else {
-      return color (255);
+      return color (255, 255, 0);
     }
   }
 
@@ -194,30 +200,23 @@ class TablaVirtual { //<>//
   private PVector getBoundingBoxSize() {
     return new PVector(boundingBox[1].x - boundingBox[0].x, boundingBox[1].y - boundingBox[0].y);
   }
+
+  PVector[][] getGridPoints() {
+    return beatGrid;
+  }
+
+
+
+  // SYSTEM INPUT EVENTS -----------------
+
+  public void onMousePressed() {
+
+    tabla.detectarTocarEsquinasGrid(mouseX, mouseY);
+    tabla.detectarTocarEsquinasBox(mouseX, mouseY);
+  }
+
+  public void onMouseReleased() {
+    tabla.draggingGridCorner = false;
+    tabla.draggingBoxCorner = false;
+  }
 }
-
-
-
-/*
-  private void buildInterpolations() {
- 
- // CREATING THE QUADRATIC GRADIENT FROM 0 TO 1 (NOT FROM POINT TO POINT IN SPACE)
- // X
- for (int t = 0; t < trackStepPos[0].length; t++) {
- float normalizedResolution = (float) t / trackStepPos[0].length;
- trackStepPos[t].x = 2 * (1 - (normalizedResolution)) * (normalizedResolution) * midPoint.x + pow((normalizedResolution), 2) * 1;
- // ENTERA: subDivsX[t] = p5.pow((1 - normalizeResolution),2) * 0 +
- // 2*(1 - (normalizeResolution)) * (normalizeResolution) *
- // midPoints[0] + p5.pow((normalizeResolution),2) * 1;
- // System.out.println("Line " + t + " X at:" + xSubT);
- }
- 
- // Y
- for (int t = 0; t < trackStepPos.length; t++) {
- float normalizedResolution = (float) t / trackStepPos.length;
- trackStepPos[t].y = 2 * (1 - (normalizedResolution)) * (normalizedResolution) * midPoints[1] + p5.pow((normalizedResolution), 2) * 1;
- }
- 
- }
- }
- */
