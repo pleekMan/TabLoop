@@ -1,19 +1,21 @@
 import controlP5.*;
 
+ControlP5 controles;
 
 TablaVirtual tabla;
-
-ControlP5 controles;
 ComputerVisionManager cvManager;
+SoundManager soundManager;
 
 void setup() {
   size(700, 700);
 
-  tabla = new TablaVirtual();
-  cvManager = new ComputerVisionManager();
-
   controles = new ControlP5(this);
   crearControles();
+  
+  tabla = new TablaVirtual();
+  cvManager = new ComputerVisionManager();
+  soundManager = new SoundManager();
+
 }
 
 // comentario
@@ -26,13 +28,18 @@ void draw() {
   // -----
   // DETECTING WHETHER A gridPoint is active on the cameraImage
   PVector[][] gridPoints = tabla.getGridPoints();
-  for (int y=0; y < gridPoints.length; y++) {
-    for (int x=0; x < gridPoints[0].length; x++) {
+  for (int track=0; track < gridPoints.length; track++) {
+    for (int beat=0; beat < gridPoints[0].length; beat++) {
 
-      //boolean isOn = cvManager.isOn(gridPoints[y][x].x,gridPoints[y][x].y);      
-
-      // IF CVMANAGER DETECTS POINT IS "ON", SET THE z COMPONENT OF THE gridPoint PVector TO 1 (OR MORE THAN 0);
-      gridPoints[y][x].z = cvManager.isOn(gridPoints[y][x].x, gridPoints[y][x].y) ? 0 : 1;
+      // IF CVMANAGER DETECTS POINT IS "ON" 
+      boolean isOn = cvManager.isOn(gridPoints[track][beat].x, gridPoints[track][beat].y);
+      
+      // SET THE z COMPONENT OF THE gridPoint PVector TO 1 (OR MORE THAN 0);
+      gridPoints[track][beat].z =  isOn ? 0 : 1;
+      
+      // TRIGGER TRACK AUDIO
+      soundManager.triggerBeat(track);
+      
     }
   }
   // -----
@@ -63,7 +70,7 @@ void keyPressed() {
 
 /// GUI CONTROLLERS ------------------------
 
-void correccionPerspectiva(float value) {
+void sliderCorreccionPerspectiva(float value) {
   // CALLBACK PARA Slider DE BEZIER MIDPOINT
   tabla.bezierMidPoint.x = map(value, -1, 1, 0, 1);
   tabla.ordenarBeatGrid();
@@ -71,7 +78,7 @@ void correccionPerspectiva(float value) {
 
 void crearControles() {
 
-  controles.addSlider("correccionPerspectiva")
+  controles.addSlider("sliderCorreccionPerspectiva")
     .setLabel("PERPECTIVA")
     .setPosition(20, height - 50)
     .setWidth(200)
