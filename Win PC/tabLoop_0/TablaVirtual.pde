@@ -86,6 +86,9 @@ class TablaVirtual { //<>//
             fill(0, 255, 0);
             ellipse(pointInScreen.x, pointInScreen.y, 10, 10);
           }
+          
+          // DIBUJAR PIXEL KERNEL
+          
         }
       }
 
@@ -151,14 +154,14 @@ class TablaVirtual { //<>//
   }
 
   private PVector fitToBoundingBoxScreen(PVector point) {
-    // FROM BOUNDING BOX NORMAL SPACE -> SCREEN SPACE
+    // FROM BOUNDING BOX NORMAL SPACE -> SCREEN PIXEL SPACE
     float x = map(point.x, 0, 1, boundingBox[0].x, boundingBox[1].x);
     float y = map(point.y, 0, 1, boundingBox[0].y, boundingBox[1].y);
     return new PVector(x, y);
   }
 
   private PVector fitToBoundingBoxNormalized(PVector point) {
-    // FROM SCREEN SPACE -> BOUNDING BOX NORMAL SPACE
+    // FROM SCREEN PIXEL SPACE -> BOUNDING BOX NORMAL SPACE
     float x = map(point.x, boundingBox[0].x, boundingBox[1].x, 0, 1);
     float y = map(point.y, boundingBox[0].y, boundingBox[1].y, 0, 1);
     return new PVector(x, y);
@@ -216,7 +219,7 @@ class TablaVirtual { //<>//
   }
 
   public void onMouseReleased() {
-    tabla.draggingGridCorner = false;
-    tabla.draggingBoxCorner = false;
+    draggingGridCorner = false;
+    draggingBoxCorner = false;
   }
 }

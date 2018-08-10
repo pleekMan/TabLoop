@@ -10,7 +10,7 @@ class SoundManager{
     
   }
   
-  public void triggerBeat(int track){
+  public void triggerSound(int track){
     
   }
   

@@ -18,13 +18,12 @@ void setup() {
 
 }
 
-// comentario
-
 
 void draw() {
   background(0);
   text("FR: " + frameRate, 10, 10);
 
+  
   // -----
   // DETECTING WHETHER A gridPoint is active on the cameraImage
   PVector[][] gridPoints = tabla.getGridPoints();
@@ -35,10 +34,10 @@ void draw() {
       boolean isOn = cvManager.isOn(gridPoints[track][beat].x, gridPoints[track][beat].y);
       
       // SET THE z COMPONENT OF THE gridPoint PVector TO 1 (OR MORE THAN 0);
-      gridPoints[track][beat].z =  isOn ? 0 : 1;
+      gridPoints[track][beat].z =  isOn ? 1 : 0;
       
       // TRIGGER TRACK AUDIO
-      soundManager.triggerBeat(track);
+      soundManager.triggerSound(track);
       
     }
   }

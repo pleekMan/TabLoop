@@ -3,12 +3,15 @@ class ComputerVisionManager {
   PImage camImage;
   PVector imageScreenPos;
   int umbral;
+  int areaSize;
 
   public ComputerVisionManager() {
 
-    camImage = loadImage("BWgrid.png");
+    camImage = loadImage("camView.png");
     imageScreenPos = new PVector();
     umbral = 127;
+
+    areaSize = 10; // IMPARES, ASI EXISTE UN PIXEL CENTRAL
   }
 
   public void render() {
@@ -22,14 +25,38 @@ class ComputerVisionManager {
     int imageX = (int)(x * camImage.width);
     int imageY = (int)(y * camImage.height);
 
-    int pxSlot = imageX + (imageY * camImage.width);
+    int pxBrightness = -1;
 
-    //float pxBrightness = brightness(camImage.pixels[pxSlot]); // NO USAR ESTA FUNCION, HACERLO CON BITWISE OPERATION
-    int pxBrightness = camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
-    
-    if (pxBrightness > umbral) {
-      return true;
+    if (areaSize == 1) {
+      int pxSlot = imageX + (imageY * camImage.width);
+      pxBrightness = camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
+    } else {
+      pxBrightness = evaluateArea(imageX, imageY, areaSize);
     }
-    return false;
+
+    return pxBrightness > umbral;
+  }
+
+
+  int evaluateArea(int xCenter, int yCenter, int kernelSize) {
+
+    int brilloAcumulativo = 0;
+
+    // FROM NEGATIVE TO POSITIVE (ES FACIL DESPUES SIMPLEMENTE SUMARLE x/y AL PIXEL CENTRAL)
+    int kernelStart = 0 - floor(kernelSize * 0.5); 
+
+    for (int y= kernelStart; y < -kernelStart; y++) {
+      for (int x= kernelStart; x < -kernelStart; x++) {
+
+        int pixelX = xCenter + x;
+        int pixelY = yCenter + y;
+
+        int pxSlot = pixelX + (pixelY * camImage.width);
+
+        brilloAcumulativo += camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
+      }
+    }
+
+    return brilloAcumulativo / (kernelSize * kernelSize);
   }
 }
