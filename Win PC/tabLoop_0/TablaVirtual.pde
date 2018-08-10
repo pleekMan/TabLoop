@@ -14,6 +14,8 @@ class TablaVirtual { //<>//
 
   int atStep;
 
+  int kernelSize = 10; // ONLY FOR VISUALIZATION PURPOSES
+
   public TablaVirtual() {
 
     int tracks = 10;
@@ -57,7 +59,6 @@ class TablaVirtual { //<>//
       boundingBox[selectedBoxCorner].set(mouseX, mouseY);
       ordenarBeatGrid();
     }
-
   }
 
 
@@ -76,19 +77,25 @@ class TablaVirtual { //<>//
         for (int step=0; step < beatGrid[0].length; step++) {
 
           PVector pointInScreen = fitToBoundingBoxScreen(beatGrid[track][step]);
-          
+
           // gridPoints COLOR
+          noStroke();
           fill(colorearPuntos(track, step));
-          ellipse(pointInScreen.x, pointInScreen.y, 5, 5);
+          ellipse(pointInScreen.x, pointInScreen.y, 3, 3);
 
           // gridPoints BEAT ON
           if (beatGrid[track][step].z >= 0.1) {
             fill(0, 255, 0);
-            ellipse(pointInScreen.x, pointInScreen.y, 10, 10);
+            ellipse(pointInScreen.x, pointInScreen.y, 7, 7);
           }
-          
+
           // DIBUJAR PIXEL KERNEL
-          
+          if (kernelSize != 1) {
+            noFill();
+            stroke(255, 125, 0);
+            int rectOffset = floor(kernelSize * 0.5);
+            rect(pointInScreen.x - rectOffset, pointInScreen.y - rectOffset, kernelSize, kernelSize);
+          }
         }
       }
 
@@ -191,7 +198,7 @@ class TablaVirtual { //<>//
   private color colorearPuntos(int track, int step) {
 
     // CORNER POINTS SON ROJOS. TODO LO DEMAS, BLANCO
-    
+
     if ((track == 0 && step ==0) || (track == beatGrid.length - 1 && step ==0) || (track == 0 &&  step == beatGrid[0].length - 1) || (track == beatGrid.length - 1 && step == beatGrid[0].length - 1)) {
       return color (255, 0, 0);
     } else {

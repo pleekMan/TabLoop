@@ -59,4 +59,9 @@ class ComputerVisionManager {
 
     return brilloAcumulativo / (kernelSize * kernelSize);
   }
+
+
+  void setKernelSize(int kernelSize) {
+    areaSize = kernelSize;
+  }
 }

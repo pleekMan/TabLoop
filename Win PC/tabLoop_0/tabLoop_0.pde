@@ -9,12 +9,13 @@ SoundManager soundManager;
 void setup() {
   size(700, 700);
 
-  controles = new ControlP5(this);
-  crearControles();
-  
+
   tabla = new TablaVirtual();
   cvManager = new ComputerVisionManager();
   soundManager = new SoundManager();
+  
+  controles = new ControlP5(this);
+  crearControles();
 
 }
 
@@ -23,7 +24,7 @@ void draw() {
   background(0);
   text("FR: " + frameRate, 10, 10);
 
-  
+
   // -----
   // DETECTING WHETHER A gridPoint is active on the cameraImage
   PVector[][] gridPoints = tabla.getGridPoints();
@@ -32,13 +33,12 @@ void draw() {
 
       // IF CVMANAGER DETECTS POINT IS "ON" 
       boolean isOn = cvManager.isOn(gridPoints[track][beat].x, gridPoints[track][beat].y);
-      
+
       // SET THE z COMPONENT OF THE gridPoint PVector TO 1 (OR MORE THAN 0);
       gridPoints[track][beat].z =  isOn ? 1 : 0;
-      
+
       // TRIGGER TRACK AUDIO
       soundManager.triggerSound(track);
-      
     }
   }
   // -----
@@ -75,6 +75,11 @@ void sliderCorreccionPerspectiva(float value) {
   tabla.ordenarBeatGrid();
 }
 
+void kernelSize(float value){
+  cvManager.setKernelSize(int(value));
+  tabla.kernelSize = int(value);
+}
+
 void crearControles() {
 
   controles.addSlider("sliderCorreccionPerspectiva")
@@ -86,4 +91,14 @@ void crearControles() {
     .setNumberOfTickMarks(9)
     .setSliderMode(Slider.FLEXIBLE)
     .snapToTickMarks(false);
+
+  controles.addSlider("kernelSize")
+    .setLabel("KERNEL DE PUNTO")
+    .setPosition(20, height - 30)
+    .setWidth(200)
+    .setRange(1, 21)
+    .setValue(cvManager.areaSize)
+    .setNumberOfTickMarks(11)
+    .setSliderMode(Slider.FLEXIBLE)
+    .snapToTickMarks(true);
 }
