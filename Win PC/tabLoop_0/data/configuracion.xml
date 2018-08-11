@@ -1,0 +1,19 @@
+<configuracion>
+   <grid>
+      <boundingBox>
+         <corner x="0" y="0"/>
+         <corner x="640" y="480"/>
+      </boundingBox>
+      <controlPoints>
+         <point id="0" x="0" y="0"/>
+         <point id="1" x="1" y="0"/>
+         <point id="2" x="1" y="1"/>
+         <point id="3" x="0" y="1"/>
+      </controlPoints>
+      <perspectiveCorrection value="0"/>
+   </grid>
+   <computerVision>
+      <pointKernelSize value="1"/>
+      <binaryThreshold value="127"/>
+   </computerVision>
+</configuracion>
