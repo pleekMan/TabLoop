@@ -1,20 +1,20 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configuracion>
-   <grid>
-      <boundingBox>
-         <corner x="10" y="10"/>
-         <corner x="620" y="460"/>
-      </boundingBox>
-      <controlCorners>
-         <point id="0" x="0" y="0"/>
-         <point id="1" x="1" y="0"/>
-         <point id="2" x="1" y="1"/>
-         <point id="3" x="0" y="0.5"/>
-      </controlCorners>
-      <perspectiveCorrection value="0"/>
-   </grid>
-   <computerVision>
-      <kernelSize value="5"/>
-      <binaryThreshold value="0.5"/>
-   </computerVision>
+  <grid>
+    <boundingBox>
+      <corner x="2" y="2"/>
+      <corner x="637" y="478"/>
+    </boundingBox>
+    <controlCorners>
+      <point id="0" x="0.18110237" y="0.27941176"/>
+      <point id="1" x="0.71653545" y="0.0"/>
+      <point id="2" x="0.71653545" y="1.0"/>
+      <point id="3" x="0.18110237" y="0.72689074"/>
+    </controlCorners>
+    <perspectiveCorrection value="-0.32631576"/>
+  </grid>
+  <computerVision>
+    <kernelSize value="9"/>
+    <binaryThreshold value="0.49803922"/>
+  </computerVision>
 </configuracion>

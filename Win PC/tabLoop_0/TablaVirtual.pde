@@ -3,7 +3,7 @@ class TablaVirtual { //<>//
   PVector [] boundingBox; // topLeft y bottomRight points, in screenSpace. Should fit the camera image.
   PVector[] cornerPoints; // EVERYTHING NORMALIZED
   PVector[][] beatGrid; // [TRACK][STEP] NORMALIZED // Z COMPONENT IS USED TO AS BINARY ON/OFF
-  PVector bezierMidPoint = new PVector(0.5, 0.5);
+  PVector bezierMidPoint = new PVector(0.5, 0.5); // 0 -> 1
   //PVector gridOffset = new PVector(0.025,0.05);
 
   boolean calibrationMode = true;
@@ -214,11 +214,18 @@ class TablaVirtual { //<>//
   PVector[][] getGridPoints() {
     return beatGrid;
   }
+  
+  float getPerspectiveCorrection(){
+   return bezierMidPoint.x; 
+  }
 
-  void loadSettings(SettingsLoader config) {
+ public void loadSettings(SettingsLoader config) {
     try {
-      boundingBox = config.getBoundingBox();
-      cornerPoints = config.getCornerPoints();
+      boundingBox = config.loadBoundingBox();
+      cornerPoints = config.loadCornerPoints();
+      
+      bezierMidPoint.x = map(config.loadPerspectiveCorrection(),-1,1,0,1);
+      
     } 
     catch (Exception error){
       println(error);

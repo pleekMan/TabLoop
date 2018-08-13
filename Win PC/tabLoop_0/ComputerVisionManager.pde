@@ -1,4 +1,4 @@
-class ComputerVisionManager { //<>//
+class ComputerVisionManager {
 
   PImage camImage;
   PVector imageScreenPos;
@@ -32,16 +32,16 @@ class ComputerVisionManager { //<>//
       int pxSlot = imageX + (imageY * camImage.width);
       pxBrightness = camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
     } else {
-      println("Kernel = " + areaSize);
+      //println("Kernel = " + areaSize);
       pxBrightness = evaluateArea(imageX, imageY, areaSize);
     }
 
     return pxBrightness > umbral;
   }
 
-
+  // #### BUG: ERROR CUANDO UN PIXEL POINT ESTA EN EL BORDE DEL boundiNgBox
   int evaluateArea(int xCenter, int yCenter, int kernelSize) {
-
+  
     int brilloAcumulativo = 0;
 
     // FROM NEGATIVE TO POSITIVE (ES FACIL DESPUES SIMPLEMENTE SUMARLE x/y AL PIXEL CENTRAL)
@@ -71,5 +71,15 @@ class ComputerVisionManager { //<>//
 
   private boolean pixelIsInsideBounds(int x, int y) {
     return x >= 0 && x < camImage.width && y >= 0 && y < camImage.height;
+  }
+
+  public void loadSettings(SettingsLoader config) {
+    try {
+      umbral = config.loadCvThreshold();
+      areaSize = config.loadCvKernelSize();
+    } 
+    catch (Exception error) {
+      println(error);
+    }
   }
 }

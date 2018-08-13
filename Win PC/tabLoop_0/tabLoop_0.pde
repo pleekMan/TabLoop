@@ -1,4 +1,4 @@
-import controlP5.*;
+import controlP5.*; //<>//
 
 ControlP5 controles;
 
@@ -15,10 +15,10 @@ void setup() {
   cvManager = new ComputerVisionManager();
   soundManager = new SoundManager();
 
+  cargarConfiguracionExterna(config);
+
   controles = new ControlP5(this);
   crearControles();
-
-  //tabla.loadSettings(config);
 }
 
 
@@ -78,22 +78,28 @@ void sliderCorreccionPerspectiva(float value) {
 }
 
 void kernelSize(float value) {
-  cvManager.setKernelSize(int(value));
-  tabla.kernelSize = int(value);
+  int kernelEntero = (int)value;
+  cvManager.setKernelSize(kernelEntero);
+  tabla.kernelSize = kernelEntero;
+}
+
+void saveConfig(int value) {
+  guardarConfiguracionExterna();
 }
 
 void crearControles() {
 
   controles.addSlider("sliderCorreccionPerspectiva")
-    .setLabel("PERPECTIVA")
+    .setLabel("PERSPECTIVA")
     .setPosition(20, height - 50)
     .setWidth(200)
     .setRange(-1, 1)
-    .setValue(0)
+    .setValue(config.loadPerspectiveCorrection())
     .setNumberOfTickMarks(9)
     .setSliderMode(Slider.FLEXIBLE)
     .snapToTickMarks(false);
 
+  int kSize = cvManager.areaSize;
   controles.addSlider("kernelSize")
     .setLabel("KERNEL DE PUNTO")
     .setPosition(20, height - 30)
@@ -102,5 +108,35 @@ void crearControles() {
     .setNumberOfTickMarks(11)
     .setSliderMode(Slider.FLEXIBLE)
     .snapToTickMarks(true)
-    .setValue(cvManager.areaSize);
+    .setValue(kSize);
+
+  controles.addButton("saveConfig")
+    .setLabel("GUARDAR CONFIGURACION")
+    .setSize(150,20)
+    .setPosition(350, height - 50);
+}
+
+void cargarConfiguracionExterna(SettingsLoader config) {
+  if (config.isLoaded()) {
+    tabla.loadSettings(config);
+    cvManager.loadSettings(config);
+    println("-|| CONFIGURACION ANTERIOR CARGADA");
+  } else {
+    println("-|| LA CONFIGURACION ANTERIOR NO SE CARGO.\n-||FIJATE QUE ONDA CON EL ARCHIVO configuracion.xml EN LA CARPETA data");
+  }
+}
+
+void guardarConfiguracionExterna() {
+  if (config.isLoaded()) {
+    config.saveBoundingBox(tabla.boundingBox);
+    config.saveCornerPoints(tabla.cornerPoints);
+    config.savePerspectiveCorrection(map(tabla.getPerspectiveCorrection(),0,1,-1,1)); //<>//
+    config.saveCvKernelSize(cvManager.areaSize);
+    config.saveCvThreshold(cvManager.umbral);
+
+    config.guardar();
+    println("-|| CONFIGURACION GUARDADA");
+  } else {
+    println("-|| LA CONFIGURACION NO SE GUARDO.\n-||FIJATE QUE ONDA CON EL ARCHIVO configuracion.xml EN LA CARPETA data");
+  }
 }
