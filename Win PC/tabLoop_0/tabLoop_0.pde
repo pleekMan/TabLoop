@@ -2,6 +2,7 @@ import controlP5.*;
 
 ControlP5 controles;
 
+SettingsLoader config;
 TablaVirtual tabla;
 ComputerVisionManager cvManager;
 SoundManager soundManager;
@@ -9,14 +10,15 @@ SoundManager soundManager;
 void setup() {
   size(700, 700);
 
-
+  config = new SettingsLoader("configuracion.xml");
   tabla = new TablaVirtual();
   cvManager = new ComputerVisionManager();
   soundManager = new SoundManager();
-  
+
   controles = new ControlP5(this);
   crearControles();
 
+  //tabla.loadSettings(config);
 }
 
 
@@ -75,7 +77,7 @@ void sliderCorreccionPerspectiva(float value) {
   tabla.ordenarBeatGrid();
 }
 
-void kernelSize(float value){
+void kernelSize(float value) {
   cvManager.setKernelSize(int(value));
   tabla.kernelSize = int(value);
 }
@@ -97,8 +99,8 @@ void crearControles() {
     .setPosition(20, height - 30)
     .setWidth(200)
     .setRange(1, 21)
-    .setValue(cvManager.areaSize)
     .setNumberOfTickMarks(11)
     .setSliderMode(Slider.FLEXIBLE)
-    .snapToTickMarks(true);
+    .snapToTickMarks(true)
+    .setValue(cvManager.areaSize);
 }

@@ -1,4 +1,4 @@
-class ComputerVisionManager {
+class ComputerVisionManager { //<>//
 
   PImage camImage;
   PVector imageScreenPos;
@@ -11,7 +11,7 @@ class ComputerVisionManager {
     imageScreenPos = new PVector();
     umbral = 127;
 
-    areaSize = 10; // IMPARES, ASI EXISTE UN PIXEL CENTRAL
+    areaSize = 9; // IMPARES, ASI EXISTE UN PIXEL CENTRAL
   }
 
   public void render() {
@@ -28,9 +28,11 @@ class ComputerVisionManager {
     int pxBrightness = -1;
 
     if (areaSize == 1) {
+      //println("Kernel = " + areaSize);
       int pxSlot = imageX + (imageY * camImage.width);
       pxBrightness = camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
     } else {
+      println("Kernel = " + areaSize);
       pxBrightness = evaluateArea(imageX, imageY, areaSize);
     }
 
@@ -51,9 +53,10 @@ class ComputerVisionManager {
         int pixelX = xCenter + x;
         int pixelY = yCenter + y;
 
-        int pxSlot = pixelX + (pixelY * camImage.width);
-
-        brilloAcumulativo += camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
+        if (pixelIsInsideBounds(pixelX, pixelY)) {
+          int pxSlot = pixelX + (pixelY * camImage.width);
+          brilloAcumulativo += camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
+        }
       }
     }
 
@@ -61,7 +64,12 @@ class ComputerVisionManager {
   }
 
 
-  void setKernelSize(int kernelSize) {
+  public void setKernelSize(int kernelSize) {
     areaSize = kernelSize;
+  }
+
+
+  private boolean pixelIsInsideBounds(int x, int y) {
+    return x >= 0 && x < camImage.width && y >= 0 && y < camImage.height;
   }
 }

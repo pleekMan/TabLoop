@@ -14,7 +14,7 @@ class TablaVirtual { //<>//
 
   int atStep;
 
-  int kernelSize = 10; // ONLY FOR VISUALIZATION PURPOSES
+  int kernelSize = 9; // ONLY FOR VISUALIZATION PURPOSES
 
   public TablaVirtual() {
 
@@ -213,6 +213,17 @@ class TablaVirtual { //<>//
 
   PVector[][] getGridPoints() {
     return beatGrid;
+  }
+
+  void loadSettings(SettingsLoader config) {
+    try {
+      boundingBox = config.getBoundingBox();
+      cornerPoints = config.getCornerPoints();
+    } 
+    catch (Exception error){
+      println(error);
+    }
+    ordenarBeatGrid();
   }
 
 
