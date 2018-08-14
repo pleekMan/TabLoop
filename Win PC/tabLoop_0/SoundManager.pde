@@ -19,7 +19,8 @@ class SoundManager {
 
 
     bombo = new SoundFile[2];
-
+    
+    /*
     for (int i=0; i < 2; i++) {
       bombo[i] = new SoundFile(this, "sample.mp3");
       redo[i] = new SoundFile[3];
@@ -27,6 +28,7 @@ class SoundManager {
       openHH[i] = new SoundFile[3];
       FX[i] = new SoundFile[3];
     }
+    */
   }
 
   public void update() {

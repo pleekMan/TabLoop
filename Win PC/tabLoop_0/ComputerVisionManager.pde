@@ -118,7 +118,8 @@ class ComputerVisionManager {
 
   public void loadSettings(SettingsLoader config) {
     try {
-      umbral = config.loadCvThreshold();
+      println("At CV: " + config.loadCvThreshold());
+      setUmbral(config.loadCvThreshold());
       areaSize = config.loadCvKernelSize();
     } 
     catch (Exception error) {

@@ -8,16 +8,16 @@ ControlP5 controles;
 SettingsLoader config;
 TablaVirtual tabla;
 ComputerVisionManager cvManager;
-SoundManager soundManager;
+//SoundManager soundManager;
 
 void setup() {
   size(1000, 700);
-  
+
 
   config = new SettingsLoader("configuracion.xml");
   tabla = new TablaVirtual();
   cvManager = new ComputerVisionManager(this);
-  soundManager = new SoundManager();
+  //soundManager = new SoundManager();
 
   cargarConfiguracionExterna(config);
 
@@ -44,7 +44,7 @@ void draw() {
       gridPoints[track][beat].z =  isOn ? 1 : 0;
 
       // TRIGGER TRACK AUDIO
-      soundManager.triggerSound(track);
+      //soundManager.triggerSound(track);
     }
   }
   // -----
@@ -116,7 +116,7 @@ void saveConfig(int value) {
   guardarConfiguracionExterna();
 }
 
-void umbralCV(float value){
+void umbralCV(float value) {
   cvManager.setUmbral(value);
 }
 
@@ -143,6 +143,8 @@ void crearControles() {
     .snapToTickMarks(true)
     .setValue(kSize);
 
+// SI LA CUENTA DE setValue SE HACE EN EL MOMENTO, NO SE ASIGNA. BUG? HAY Q HACERLA ANTES/AFUERA.
+    float valorUmbral = cvManager.umbral / 255.0;
   controles.addSlider("umbralCV")
     .setLabel("UMBRAL BINARIO")
     .setPosition(20, height - 30)
@@ -151,7 +153,7 @@ void crearControles() {
     .setNumberOfTickMarks(5)
     .setSliderMode(Slider.FLEXIBLE)
     .snapToTickMarks(false)
-    .setValue(0.5);
+    .setValue(valorUmbral);
 
   controles.addButton("saveConfig")
     .setLabel("GUARDAR CONFIGURACION")

@@ -11,10 +11,10 @@
       <point id="2" x="0.71653545" y="1.0"/>
       <point id="3" x="0.18110237" y="0.72689074"/>
     </controlCorners>
-    <perspectiveCorrection value="-0.32631576"/>
+    <perspectiveCorrection value="-0.25"/>
   </grid>
   <computerVision>
     <kernelSize value="9"/>
-    <binaryThreshold value="0.49803922"/>
+    <binaryThreshold value="0.24705882"/>
   </computerVision>
 </configuracion>

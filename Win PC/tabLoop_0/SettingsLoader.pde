@@ -60,8 +60,8 @@ class SettingsLoader {
     config.getChild("grid/perspectiveCorrection").setFloat("value", value);
   }
 
-  public int loadCvThreshold() {
-    return int(config.getChild("computerVision/binaryThreshold").getFloat("value") * 255);
+  public float loadCvThreshold() {
+    return config.getChild("computerVision/binaryThreshold").getFloat("value");
   }
 
   public void saveCvThreshold(int value) {

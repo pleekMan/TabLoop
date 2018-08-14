@@ -1,4 +1,4 @@
-class TablaVirtual { //<>// //<>// //<>//
+class TablaVirtual { //<>//
 
   PVector [] boundingBox; // topLeft y bottomRight points, in screenSpace. Should fit the camera image.
   PVector[] cornerPoints; // EVERYTHING NORMALIZED
