@@ -148,7 +148,7 @@ void crearControles() {
     .setNumberOfTickMarks(5)
     .setSliderMode(Slider.FLEXIBLE)
     .snapToTickMarks(false)
-    .setValue(cvManager.umbral / 255.0);
+    .setValue(0.5);
 
   controles.addButton("saveConfig")
     .setLabel("GUARDAR CONFIGURACION")
