@@ -1,21 +1,55 @@
+import processing.video.*;
+import gab.opencv.*;
+
 class ComputerVisionManager {
+
+
+  Capture videoIn;
+  OpenCV opencv;
 
   PImage camImage;
   PVector imageScreenPos;
   int umbral;
   int areaSize;
 
-  public ComputerVisionManager() {
+  public ComputerVisionManager(PApplet p5) {
+
+    videoIn = new Capture(p5, 1280, 720);
+    videoIn.start();
+
+    opencv = new OpenCV(p5, videoIn);
+
 
     camImage = loadImage("camView.png");
-    imageScreenPos = new PVector();
+    imageScreenPos = new PVector(0, 0);
     umbral = 127;
 
     areaSize = 9; // IMPARES, ASI EXISTE UN PIXEL CENTRAL
   }
 
+  public void update() {
+
+    if (videoIn.available()) {
+      videoIn.read();
+      opencv.loadImage(videoIn);
+    }
+
+    opencv.gray();
+    opencv.threshold(umbral);
+    opencv.invert();
+
+    camImage = opencv.getOutput();
+  }
+
+
   public void render() {
-    image(camImage, imageScreenPos.x, imageScreenPos.y);
+    //image(camImage, imageScreenPos.x, imageScreenPos.y);
+    image(camImage, 0, 0, camImage.width * 0.5, camImage.height * 0.5);
+
+    // DIBUJAR CONTORNO DE LA IMAGEN
+    noFill();
+    stroke(255, 0, 0);
+    rect(0, 0, camImage.width * 0.5, camImage.height * 0.5);
   }
 
 
@@ -41,7 +75,7 @@ class ComputerVisionManager {
 
   // #### BUG: ERROR CUANDO UN PIXEL POINT ESTA EN EL BORDE DEL boundiNgBox
   int evaluateArea(int xCenter, int yCenter, int kernelSize) {
-  
+
     int brilloAcumulativo = 0;
 
     // FROM NEGATIVE TO POSITIVE (ES FACIL DESPUES SIMPLEMENTE SUMARLE x/y AL PIXEL CENTRAL)
@@ -66,6 +100,11 @@ class ComputerVisionManager {
 
   public void setKernelSize(int kernelSize) {
     areaSize = kernelSize;
+  }
+
+  public void setUmbral(float normValue) {
+    umbral = (int)(normValue * 255);
+    //println(umbral);
   }
 
 

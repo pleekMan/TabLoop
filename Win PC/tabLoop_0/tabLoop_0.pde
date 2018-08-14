@@ -1,4 +1,5 @@
-import controlP5.*; //<>//
+
+import controlP5.*;
 
 ControlP5 controles;
 
@@ -8,11 +9,11 @@ ComputerVisionManager cvManager;
 SoundManager soundManager;
 
 void setup() {
-  size(700, 700);
+  size(1000, 700);
 
   config = new SettingsLoader("configuracion.xml");
   tabla = new TablaVirtual();
-  cvManager = new ComputerVisionManager();
+  cvManager = new ComputerVisionManager(this);
   soundManager = new SoundManager();
 
   cargarConfiguracionExterna(config);
@@ -45,7 +46,7 @@ void draw() {
   }
   // -----
 
-
+  cvManager.update();
   cvManager.render();
 
   tabla.update();
@@ -69,6 +70,31 @@ void keyPressed() {
   }
 }
 
+void cargarConfiguracionExterna(SettingsLoader config) {
+  if (config.isLoaded()) {
+    tabla.loadSettings(config);
+    cvManager.loadSettings(config);
+    println("-|| CONFIGURACION ANTERIOR CARGADA");
+  } else {
+    println("-|| LA CONFIGURACION ANTERIOR NO SE CARGO.\n-||FIJATE QUE ONDA CON EL ARCHIVO configuracion.xml EN LA CARPETA data");
+  }
+}
+
+void guardarConfiguracionExterna() {
+  if (config.isLoaded()) {
+    config.saveBoundingBox(tabla.boundingBox);
+    config.saveCornerPoints(tabla.cornerPoints);
+    config.savePerspectiveCorrection(map(tabla.getPerspectiveCorrection(), 0, 1, -1, 1));
+    config.saveCvKernelSize(cvManager.areaSize);
+    config.saveCvThreshold(cvManager.umbral);
+
+    config.guardar();
+    println("-|| CONFIGURACION GUARDADA");
+  } else {
+    println("-|| LA CONFIGURACION NO SE GUARDO.\n-||FIJATE QUE ONDA CON EL ARCHIVO configuracion.xml EN LA CARPETA data");
+  }
+}
+
 /// GUI CONTROLLERS ------------------------
 
 void sliderCorreccionPerspectiva(float value) {
@@ -87,11 +113,15 @@ void saveConfig(int value) {
   guardarConfiguracionExterna();
 }
 
+void umbralCV(float value){
+  cvManager.setUmbral(value);
+}
+
 void crearControles() {
 
   controles.addSlider("sliderCorreccionPerspectiva")
     .setLabel("PERSPECTIVA")
-    .setPosition(20, height - 50)
+    .setPosition(20, height - 70)
     .setWidth(200)
     .setRange(-1, 1)
     .setValue(config.loadPerspectiveCorrection())
@@ -102,7 +132,7 @@ void crearControles() {
   int kSize = cvManager.areaSize;
   controles.addSlider("kernelSize")
     .setLabel("KERNEL DE PUNTO")
-    .setPosition(20, height - 30)
+    .setPosition(20, height - 50)
     .setWidth(200)
     .setRange(1, 21)
     .setNumberOfTickMarks(11)
@@ -110,33 +140,18 @@ void crearControles() {
     .snapToTickMarks(true)
     .setValue(kSize);
 
+  controles.addSlider("umbralCV")
+    .setLabel("UMBRAL BINARIO")
+    .setPosition(20, height - 30)
+    .setWidth(200)
+    .setRange(0, 1)
+    .setNumberOfTickMarks(5)
+    .setSliderMode(Slider.FLEXIBLE)
+    .snapToTickMarks(false)
+    .setValue(cvManager.umbral / 255.0);
+
   controles.addButton("saveConfig")
     .setLabel("GUARDAR CONFIGURACION")
-    .setSize(150,20)
+    .setSize(150, 20)
     .setPosition(350, height - 50);
-}
-
-void cargarConfiguracionExterna(SettingsLoader config) {
-  if (config.isLoaded()) {
-    tabla.loadSettings(config);
-    cvManager.loadSettings(config);
-    println("-|| CONFIGURACION ANTERIOR CARGADA");
-  } else {
-    println("-|| LA CONFIGURACION ANTERIOR NO SE CARGO.\n-||FIJATE QUE ONDA CON EL ARCHIVO configuracion.xml EN LA CARPETA data");
-  }
-}
-
-void guardarConfiguracionExterna() {
-  if (config.isLoaded()) {
-    config.saveBoundingBox(tabla.boundingBox);
-    config.saveCornerPoints(tabla.cornerPoints);
-    config.savePerspectiveCorrection(map(tabla.getPerspectiveCorrection(),0,1,-1,1)); //<>//
-    config.saveCvKernelSize(cvManager.areaSize);
-    config.saveCvThreshold(cvManager.umbral);
-
-    config.guardar();
-    println("-|| CONFIGURACION GUARDADA");
-  } else {
-    println("-|| LA CONFIGURACION NO SE GUARDO.\n-||FIJATE QUE ONDA CON EL ARCHIVO configuracion.xml EN LA CARPETA data");
-  }
 }
