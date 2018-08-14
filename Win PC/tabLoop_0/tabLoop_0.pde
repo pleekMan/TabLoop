@@ -1,5 +1,7 @@
 
 import controlP5.*;
+import processing.sound.*;
+import java.util.Date;
 
 ControlP5 controles;
 
@@ -10,6 +12,7 @@ SoundManager soundManager;
 
 void setup() {
   size(1000, 700);
+  
 
   config = new SettingsLoader("configuracion.xml");
   tabla = new TablaVirtual();
