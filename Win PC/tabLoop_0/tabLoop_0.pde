@@ -8,7 +8,7 @@ ControlP5 controles;
 SettingsLoader config;
 TablaVirtual tabla;
 ComputerVisionManager cvManager;
-//SoundManager soundManager;
+SoundManager soundManager;
 
 void setup() {
   size(1000, 700);
@@ -17,7 +17,7 @@ void setup() {
   config = new SettingsLoader("configuracion.xml");
   tabla = new TablaVirtual();
   cvManager = new ComputerVisionManager(this);
-  //soundManager = new SoundManager();
+  soundManager = new SoundManager(this);
 
   cargarConfiguracionExterna(config);
 
@@ -71,6 +71,7 @@ void keyPressed() {
   }
   if (keyCode == UP) {
   }
+  soundManager.onKeyPrssd(key);
 }
 
 void cargarConfiguracionExterna(SettingsLoader config) {
