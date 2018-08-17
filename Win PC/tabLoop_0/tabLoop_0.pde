@@ -1,5 +1,4 @@
-
-import controlP5.*;
+import controlP5.*; //<>//
 import processing.sound.*;
 import java.util.Date;
 
@@ -8,7 +7,9 @@ ControlP5 controles;
 SettingsLoader config;
 TablaVirtual tabla;
 ComputerVisionManager cvManager;
-SoundManager soundManager;
+//SoundManager soundManager;
+
+Timer adaptiveBinarizationTimer;
 
 void setup() {
   size(1000, 700);
@@ -17,12 +18,16 @@ void setup() {
   config = new SettingsLoader("configuracion.xml");
   tabla = new TablaVirtual();
   cvManager = new ComputerVisionManager(this);
-  soundManager = new SoundManager(this);
+  // soundManager = new SoundManager(this);
 
   cargarConfiguracionExterna(config);
 
   controles = new ControlP5(this);
   crearControles();
+
+  adaptiveBinarizationTimer = new Timer();
+  adaptiveBinarizationTimer.setDurationInSeconds(10);
+  adaptiveBinarizationTimer.start();
 }
 
 
@@ -31,7 +36,27 @@ void draw() {
   text("FR: " + frameRate, 10, 10);
 
 
+  // DETECTING WHETHER A gridPoint is active on the cameraImage
+  detectGridInTable();
   // -----
+
+  cvManager.update();
+  cvManager.render();
+
+  tabla.update();
+  tabla.render();
+
+  //---
+  //-- CADA TANTO, EJECUTAR PROCESO DE CONTRASTE ADAPTATIVO
+  if (adaptiveBinarizationTimer.isFinished()) {
+    cvManager.adaptContrast(tabla.getGridPoints());
+    adaptiveBinarizationTimer.start();
+    controles.getController("umbralCV").setValue(cvManager.umbral / 255.0);
+  }
+  //----
+}
+
+void detectGridInTable() {
   // DETECTING WHETHER A gridPoint is active on the cameraImage
   PVector[][] gridPoints = tabla.getGridPoints();
   for (int track=0; track < gridPoints.length; track++) {
@@ -47,23 +72,16 @@ void draw() {
       //soundManager.triggerSound(track);
     }
   }
-  // -----
-
-  cvManager.update();
-  cvManager.render();
-
-  tabla.update();
-  tabla.render();
 }
 
 // SYSTEM INPUT EVENTS --------------
 
 void mousePressed() {
-  tabla.onMousePressed();
+  tabla.onMousePressed(mouseX, mouseY);
 }
 
 void mouseReleased() {
-  tabla.onMouseReleased();
+  tabla.onMouseReleased(mouseX, mouseY);
 }
 
 void keyPressed() {
@@ -71,7 +89,10 @@ void keyPressed() {
   }
   if (keyCode == UP) {
   }
-  soundManager.onKeyPrssd(key);
+  if (key == ' ') {
+    // cvManager.adaptContrast(tabla.getGridPoints());
+  }
+  //soundManager.onKeyPrssd(key);
 }
 
 void cargarConfiguracionExterna(SettingsLoader config) {
@@ -89,7 +110,7 @@ void guardarConfiguracionExterna() {
     config.saveBoundingBox(tabla.boundingBox);
     config.saveCornerPoints(tabla.cornerPoints);
     config.savePerspectiveCorrection(map(tabla.getPerspectiveCorrection(), 0, 1, -1, 1));
-    config.saveCvKernelSize(cvManager.areaSize);
+    config.saveCvKernelSize(cvManager.kernelAreaSize);
     config.saveCvThreshold(cvManager.umbral);
 
     config.guardar();
@@ -133,7 +154,7 @@ void crearControles() {
     .setSliderMode(Slider.FLEXIBLE)
     .snapToTickMarks(false);
 
-  int kSize = cvManager.areaSize;
+  int kSize = cvManager.kernelAreaSize;
   controles.addSlider("kernelSize")
     .setLabel("KERNEL DE PUNTO")
     .setPosition(20, height - 50)
@@ -144,8 +165,8 @@ void crearControles() {
     .snapToTickMarks(true)
     .setValue(kSize);
 
-// SI LA CUENTA DE setValue SE HACE EN EL MOMENTO, NO SE ASIGNA. BUG? HAY Q HACERLA ANTES/AFUERA.
-    float valorUmbral = cvManager.umbral / 255.0;
+  // SI LA CUENTA DE setValue SE HACE EN EL MOMENTO, NO SE ASIGNA. BUG? HAY Q HACERLA ANTES/AFUERA.
+  float valorUmbral = cvManager.umbral / 255.0;
   controles.addSlider("umbralCV")
     .setLabel("UMBRAL BINARIO")
     .setPosition(20, height - 30)

@@ -1,4 +1,4 @@
-class TablaVirtual { //<>// //<>//
+class TablaVirtual { //<>// //<>// //<>//
 
   PVector [] boundingBox; // topLeft y bottomRight points, in screenSpace. Should fit the camera image.
   PVector[] cornerPoints; // EVERYTHING NORMALIZED
@@ -237,13 +237,13 @@ class TablaVirtual { //<>// //<>//
 
   // SYSTEM INPUT EVENTS -----------------
 
-  public void onMousePressed() {
+  public void onMousePressed(int mX, int mY) {
 
-    tabla.detectarTocarEsquinasGrid(mouseX, mouseY);
-    tabla.detectarTocarEsquinasBox(mouseX, mouseY);
+    tabla.detectarTocarEsquinasGrid(mX, mY);
+    tabla.detectarTocarEsquinasBox(mX, mY);
   }
 
-  public void onMouseReleased() {
+  public void onMouseReleased(int mX, int mY) {
     draggingGridCorner = false;
     draggingBoxCorner = false;
   }

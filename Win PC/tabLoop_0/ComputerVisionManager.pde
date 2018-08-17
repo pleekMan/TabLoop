@@ -1,5 +1,6 @@
 import processing.video.*;
 import gab.opencv.*;
+import java.awt.Rectangle;
 
 class ComputerVisionManager {
 
@@ -10,7 +11,10 @@ class ComputerVisionManager {
   PImage camImage;
   PVector imageScreenPos;
   int umbral;
-  int areaSize;
+  int kernelAreaSize;
+
+  PVector contrastBoxCenter;
+  int contrastBoxSize;
 
   public ComputerVisionManager(PApplet p5) {
 
@@ -23,10 +27,14 @@ class ComputerVisionManager {
     camImage = loadImage("camView.png");
     imageScreenPos = new PVector(0, 0);
     umbral = 127;
+    println("-|| UMBRAL: " + umbral);
 
-    areaSize = 9; // IMPARES, ASI EXISTE UN PIXEL CENTRAL
+
+    kernelAreaSize = 9; // IMPARES, ASI EXISTE UN PIXEL CENTRAL
+
+    contrastBoxCenter = new PVector(videoIn.width * 0.5, videoIn.height * 0.5);
+    contrastBoxSize = int(videoIn.width * 0.25);
   }
-
   public void update() {
 
     if (videoIn.available()) {
@@ -44,16 +52,32 @@ class ComputerVisionManager {
 
   public void render() {
 
-    // IMAGEN DE ENTRADA
-    image(videoIn, camImage.width * 0.5, 0, videoIn.width * 0.2, videoIn.height * 0.2);
+    float escala1 = 0.5; // IMAGEN OPERADA
+    float escala2 = 0.25; // IMAGEN DE ENTRADA
 
-    // IMAGEN OPERADA
-    image(camImage, 0, 0, camImage.width * 0.5, camImage.height * 0.5);
+    // IMAGEN DE ENTRADA (escala2)
+    image(videoIn, camImage.width * escala1, 0, videoIn.width * escala2, videoIn.height * escala2);
+
+    // IMAGEN OPERADA (escala1)
+    image(camImage, 0, 0, camImage.width * escala1, camImage.height * escala1);
 
     // DIBUJAR CONTORNO DE LA IMAGEN
     noFill();
     stroke(255, 0, 0);
-    rect(0, 0, camImage.width * 0.5, camImage.height * 0.5);
+    rect(0, 0, camImage.width *escala1, camImage.height * escala1);
+
+    // DIBUJAR AREA DE CONTRASTE ADAPTATIVO (SOBRE IMAGEN DE ENTRADA)
+    stroke(0, 0, 255);
+    float posX = (camImage.width * escala1) + ((contrastBoxCenter.x - (contrastBoxSize * 0.5)) * escala2);
+    float posY = (contrastBoxCenter.y - (contrastBoxSize * 0.5)) * escala2;
+    rect(posX, posY, contrastBoxSize * escala2, contrastBoxSize * escala2);
+
+    fill(255, 0, 0);
+    ellipse( (camImage.width * escala1) + contrastBoxCenter.x * escala2,  contrastBoxCenter.y * escala2, 5, 5);
+    noFill();
+    //---
+    
+    
   }
 
 
@@ -65,13 +89,13 @@ class ComputerVisionManager {
 
     int pxBrightness = -1;
 
-    if (areaSize == 1) {
+    if (kernelAreaSize == 1) {
       //println("Kernel = " + areaSize);
       int pxSlot = imageX + (imageY * camImage.width);
       pxBrightness = camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
     } else {
       //println("Kernel = " + areaSize);
-      pxBrightness = evaluateArea(imageX, imageY, areaSize);
+      pxBrightness = evaluateArea(imageX, imageY, kernelAreaSize);
     }
 
     return pxBrightness > umbral;
@@ -102,8 +126,49 @@ class ComputerVisionManager {
   }
 
 
+  public void adaptContrast(PVector[][] gridPoints) {
+
+    // SAMPLEAMOS UN AREA CUADRADA DENTRO DE LA TABLA.
+    // EL AREA SE SITUA EN EL MEDIO DE LOS cornerGRidPoints, Y TIENE UN ANCHO boxSize (camWidth * 0.25)
+    PVector point1 = gridPoints[0][0];
+    PVector point2 = gridPoints[0][gridPoints[0].length - 1];
+    PVector point3 = gridPoints[gridPoints.length - 1][0];
+    PVector point4 = gridPoints[gridPoints.length - 1][gridPoints[0].length - 1];
+
+    contrastBoxCenter = new PVector();
+    contrastBoxCenter.add(point1);
+    contrastBoxCenter.add(point2);
+    contrastBoxCenter.add(point3);
+    contrastBoxCenter.add(point4);
+    contrastBoxCenter.div(4.0); // PROMEDIO
+    contrastBoxCenter.x *= videoIn.width; // ESCALAR A SCREEN SPACE
+    contrastBoxCenter.y *= videoIn.height;
+    println("-|| CONTRAST BOX CENTER :: X: " + contrastBoxCenter.x + " | y: " + contrastBoxCenter.y); 
+
+    // EXTRAER CACHITO DE IMAGEN PARA ANALIZAR
+    float proporcionDeArea = 0.2;
+    contrastBoxSize = int(videoIn.width * proporcionDeArea);
+    PImage area = videoIn.get().get(int(contrastBoxCenter.x - (contrastBoxSize * 0.5)), int(contrastBoxCenter.y - (contrastBoxSize * 0.5)), contrastBoxSize, contrastBoxSize);
+
+
+    // BUSCAR BRILLO MIN/MAX
+    float brilloMin = 99999;
+    float brilloMax = 0;
+    for (int i=0; i < area.pixels.length; i++) {
+      float brillo = brightness(area.pixels[i]); 
+      brilloMin = brillo < brilloMin ? brillo : brilloMin;
+      brilloMax = brillo > brilloMax ? brillo : brilloMax;
+    }
+
+    // SETEAR EL UMBRAL EN EL MEDIO DE LOS EXTREMOS ACTUALES
+    int correccion = 50;
+    umbral = int((brilloMin + brilloMax) * 0.5) - correccion;
+    println("-|| UMBRAL: " + umbral);
+  }
+
+
   public void setKernelSize(int kernelSize) {
-    areaSize = kernelSize;
+    kernelAreaSize = kernelSize;
   }
 
   public void setUmbral(float normValue) {
@@ -120,7 +185,7 @@ class ComputerVisionManager {
     try {
       println("At CV: " + config.loadCvThreshold());
       setUmbral(config.loadCvThreshold());
-      areaSize = config.loadCvKernelSize();
+      kernelAreaSize = config.loadCvKernelSize();
     } 
     catch (Exception error) {
       println(error);
