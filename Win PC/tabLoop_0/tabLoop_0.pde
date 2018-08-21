@@ -21,8 +21,8 @@ void setup() {
   cvManager = new ComputerVisionManager(this);
   // soundManager = new SoundManager(this);
 
-  cargarConfiguracionExterna(config);
-
+  cargarConfiguracionExterna(config); //<>//
+  
   controles = new ControlP5(this);
   crearControles();
 
@@ -120,6 +120,8 @@ void guardarConfiguracionExterna() {
     config.savePerspectiveCorrection(map(tabla.getPerspectiveCorrection(), 0, 1, -1, 1));
     config.saveCvKernelSize(cvManager.kernelAreaSize);
     config.saveCvThreshold(cvManager.umbral);
+    config.savePointsOffset(tabla.getGridPointOffsets()); //<>//
+
 
     config.guardar();
     println("-|| CONFIGURACION GUARDADA");

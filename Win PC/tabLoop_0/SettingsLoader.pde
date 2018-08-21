@@ -1,4 +1,4 @@
-class SettingsLoader {
+class SettingsLoader { //<>// //<>//
 
   XML config;
 
@@ -71,9 +71,56 @@ class SettingsLoader {
   public int loadCvKernelSize() {
     return int(config.getChild("computerVision/kernelSize").getInt("value"));
   }
-  
-    public void saveCvKernelSize(int value) {
+
+  public void saveCvKernelSize(int value) {
     config.getChild("computerVision/kernelSize").setInt("value", value);
+  }
+
+  public PVector[][] loadPointOffset(int tracks, int beats) {
+
+    PVector [][] offsets = new PVector[tracks][beats];
+    XML offsetTag = config.getChild("grid/pointsOffset");
+    XML[] tagChildren = offsetTag.getChildren("point");
+    
+    println("tagChildren.length: " + tagChildren.length);
+
+
+    for (int track=0; track < offsets.length; track++) {
+      for (int beat=0; beat < offsets[0].length; beat++) {
+        int index = beat + (track * beats);
+        println("Index: " + index);
+        println(tagChildren[index].getInt("id"));
+
+        //NON-EXISTING POINTS IN XML ARE INIT AS 0,0
+        if (index < tagChildren.length) {
+          float x = tagChildren[index].getFloat("x");
+          float y = tagChildren[index].getFloat("y");
+          offsets[track][beat] = new PVector(x, y);
+        } else {
+          offsets[track][beat] = new PVector(0, 0);
+        }
+      }
+    }
+
+    return offsets;
+  }
+
+  public void savePointsOffset(PVector[][] pointsOffset) {
+
+    XML offsetTag = config.getChild("grid/pointsOffset");
+
+    // CLEAR ALL CHILDS
+    offsetTag.setContent("");
+
+    for (int track=0; track < pointsOffset.length; track++) {
+      for (int beat=0; beat < pointsOffset[0].length; beat++) {
+        int index = beat + (track * pointsOffset[0].length);
+        XML newChild = offsetTag.addChild("point");
+        newChild.setInt("id", index);
+        newChild.setFloat("x", pointsOffset[track][beat].x);
+        newChild.setFloat("y", pointsOffset[track][beat].y);
+      }
+    }
   }
 
   public void guardar() {

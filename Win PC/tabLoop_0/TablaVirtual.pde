@@ -274,6 +274,10 @@ class TablaVirtual { //<>//
     }
     return finalOffsetedPoints;
   }
+  
+  public PVector[][] getGridPointOffsets(){
+    return beatGridOffsets;
+  }
 
   public void setGridPointState(int track, int step, int state) {
     beatGrid[track][step].z =  state;
@@ -287,6 +291,7 @@ class TablaVirtual { //<>//
     try {
       boundingBox = config.loadBoundingBox();
       cornerPoints = config.loadCornerPoints();
+      beatGridOffsets = config.loadPointOffset(beatGrid.length,beatGrid[0].length);
 
       bezierMidPoint.x = map(config.loadPerspectiveCorrection(), -1, 1, 0, 1);
     } 
