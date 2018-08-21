@@ -13,6 +13,7 @@ Timer adaptiveBinarizationTimer;
 
 void setup() {
   size(1000, 700);
+  cursor(HAND);
 
 
   config = new SettingsLoader("configuracion.xml");
@@ -58,15 +59,17 @@ void draw() {
 
 void detectGridInTable() {
   // DETECTING WHETHER A gridPoint is active on the cameraImage
-  PVector[][] gridPoints = tabla.getGridPoints();
+  PVector[][] gridPoints = tabla.getGridPoints(); // THIS GET'S AN OFFSETED COPY OF GRIDPOINTS
   for (int track=0; track < gridPoints.length; track++) {
     for (int beat=0; beat < gridPoints[0].length; beat++) {
+
+      //println(gridPoints[track][beat].x + " \t\t " + gridPoints[track][beat].y);
 
       // IF CVMANAGER DETECTS POINT IS "ON" 
       boolean isOn = cvManager.isOn(gridPoints[track][beat].x, gridPoints[track][beat].y);
 
       // SET THE z COMPONENT OF THE gridPoint PVector TO 1 (OR MORE THAN 0);
-      gridPoints[track][beat].z =  isOn ? 1 : 0;
+      tabla.setGridPointState(track, beat, isOn ? 1 : 0);
 
       // TRIGGER TRACK AUDIO
       //soundManager.triggerSound(track);
@@ -82,6 +85,11 @@ void mousePressed() {
 
 void mouseReleased() {
   tabla.onMouseReleased(mouseX, mouseY);
+  cursor(HAND);
+}
+
+void mouseDragged() {
+  tabla.onMouseDragged(mouseX, mouseY);
 }
 
 void keyPressed() {

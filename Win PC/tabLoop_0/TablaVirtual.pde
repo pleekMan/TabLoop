@@ -1,16 +1,19 @@
-class TablaVirtual { //<>// //<>// //<>//
+class TablaVirtual { //<>//
 
   PVector [] boundingBox; // topLeft y bottomRight points, in screenSpace. Should fit the camera image.
   PVector[] cornerPoints; // EVERYTHING NORMALIZED
   PVector[][] beatGrid; // [TRACK][STEP] NORMALIZED // Z COMPONENT IS USED TO AS BINARY ON/OFF
+  PVector[][] beatGridOffsets; // FOR INDIVIDUAL POINT OFFSETTING
   PVector bezierMidPoint = new PVector(0.5, 0.5); // 0 -> 1
   //PVector gridOffset = new PVector(0.025,0.05);
 
   boolean calibrationMode = true;
   int selectedGridCorner = 0;
   int selectedBoxCorner = 0;
+  int[] selectedPoint = {-1, -1};
   boolean draggingGridCorner = false;
   boolean draggingBoxCorner = false;
+  boolean draggingPoints = false;
 
   int atStep;
 
@@ -24,6 +27,7 @@ class TablaVirtual { //<>// //<>// //<>//
     boundingBox = new PVector[2];
     cornerPoints = new PVector[4];
     beatGrid = new PVector[tracks][steps];
+    beatGridOffsets = new PVector[tracks][steps];
 
     boundingBox[0] = new PVector(0, 0 );
     boundingBox[1] = new PVector(640, 480);
@@ -40,6 +44,8 @@ class TablaVirtual { //<>// //<>// //<>//
     //cornerPoints[2] = new PVector(0.9, 0.9);
     //cornerPoints[3] = new PVector(0.1, 0.9);
 
+
+    initPointsOffsets();
     ordenarBeatGrid();
 
 
@@ -59,6 +65,10 @@ class TablaVirtual { //<>// //<>// //<>//
       boundingBox[selectedBoxCorner].set(mouseX, mouseY);
       ordenarBeatGrid();
     }
+
+    // if (draggingPoints)
+    // EL CALCULO DE OFFSETS SE HACE EN mouseReleased
+    //
   }
 
 
@@ -76,7 +86,9 @@ class TablaVirtual { //<>// //<>// //<>//
       for (int track=0; track < beatGrid.length; track++) {
         for (int step=0; step < beatGrid[0].length; step++) {
 
-          PVector pointInScreen = fitToBoundingBoxScreen(beatGrid[track][step]);
+          // ADD INDIVIDUAL POINTS OFFSETING
+          PVector offsetedPoint = PVector.add(beatGrid[track][step], beatGridOffsets[track][step]);
+          PVector pointInScreen = fitToBoundingBoxScreen(offsetedPoint);
 
           // gridPoints COLOR
           noStroke();
@@ -101,10 +113,27 @@ class TablaVirtual { //<>// //<>// //<>//
 
       // DIBUJAR CORNER GIZMOS
       dibujarCornerGizmos();
+
+      // DIBUJAR POINTS CROSSHAIR
+      // EL CALCULO DE OFFSETS SE HACE EN mouseReleased
+      if (draggingPoints) {
+        stroke(255, 0, 0);
+        line(mouseX, mouseY - 10, mouseX, mouseY - 3);
+        line(mouseX, mouseY + 3, mouseX, mouseY + 10);
+
+        line(mouseX - 10, mouseY, mouseX - 3, mouseY );
+        line(mouseX + 3, mouseY, mouseX + 10, mouseY );
+      }
     }
   }
 
-
+  private void initPointsOffsets() {
+    for (int track=0; track < beatGridOffsets.length; track++) {
+      for (int step=0; step < beatGridOffsets[0].length; step++) {
+        beatGridOffsets[track][step] = new PVector(0, 0);
+      }
+    }
+  }
 
   void ordenarBeatGrid() {
 
@@ -123,6 +152,7 @@ class TablaVirtual { //<>// //<>// //<>//
         // ECUACION PARA UNA CURVA BEZIER CUADRATICA (1 PUNTO DE CONTROL + 2 VERTICES)
         stepPos.x = (pow(1-normalizedStepNumber, 2) * trackLeft.x) + (2*(1-normalizedStepNumber)*normalizedStepNumber*bezierMidPoint.x) + ((normalizedStepNumber*normalizedStepNumber) * trackRight.x);
         stepPos.y = lerp(trackLeft.y, trackRight.y, stepPos.x);
+
 
         beatGrid[track][step] = stepPos;
       }
@@ -160,8 +190,30 @@ class TablaVirtual { //<>// //<>// //<>//
     return false;
   }
 
+  public boolean detectarTocarPoints(float x, float y) {
+
+    if ( !draggingGridCorner) {
+      for (int track=0; track < beatGrid.length; track++) {
+        for (int step=0; step < beatGrid[0].length; step++) {
+          // MAP FUNCTION ALSO EXTRAPOLATES (VALUES OUTSIDE RANGES WILL GIVE CORRECT RESULTS)
+          PVector offsetedPoint = PVector.add(beatGrid[track][step], beatGridOffsets[track][step]);
+          PVector pointInScreen = fitToBoundingBoxScreen(offsetedPoint); 
+          if ( dist(x, y, pointInScreen.x, pointInScreen.y) < 10 ) {
+            selectedPoint[0] = track;
+            selectedPoint[1] = step;
+            draggingPoints = true;
+            println("Click on Track: " + selectedPoint[0] + " | Step: " + selectedPoint[1]);
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   private PVector fitToBoundingBoxScreen(PVector point) {
     // FROM BOUNDING BOX NORMAL SPACE -> SCREEN PIXEL SPACE
+    // MAP FUNCTION ALSO EXTRAPOLATES (VALUES OUTSIDE RANGES WILL GIVE CORRECT RESULTS)
     float x = map(point.x, 0, 1, boundingBox[0].x, boundingBox[1].x);
     float y = map(point.y, 0, 1, boundingBox[0].y, boundingBox[1].y);
     return new PVector(x, y);
@@ -212,22 +264,33 @@ class TablaVirtual { //<>// //<>// //<>//
   }
 
   PVector[][] getGridPoints() {
-    return beatGrid;
-  }
-  
-  float getPerspectiveCorrection(){
-   return bezierMidPoint.x; 
+    // ADD OFFSET BEFORE SENDING THEM OUT;
+    PVector [][] finalOffsetedPoints = new PVector[beatGrid.length][beatGrid[0].length];
+    for (int track=0; track < finalOffsetedPoints.length; track++) {
+      for (int step=0; step < finalOffsetedPoints[0].length; step++) {
+        finalOffsetedPoints[track][step] = PVector.add(beatGrid[track][step], beatGridOffsets[track][step]);
+        //println(beatGrid[track][step].y + " \t\t " + finalOffsetedPoints[track][step].y);
+      }
+    }
+    return finalOffsetedPoints;
   }
 
- public void loadSettings(SettingsLoader config) {
+  public void setGridPointState(int track, int step, int state) {
+    beatGrid[track][step].z =  state;
+  }
+
+  float getPerspectiveCorrection() {
+    return bezierMidPoint.x;
+  }
+
+  public void loadSettings(SettingsLoader config) {
     try {
       boundingBox = config.loadBoundingBox();
       cornerPoints = config.loadCornerPoints();
-      
-      bezierMidPoint.x = map(config.loadPerspectiveCorrection(),-1,1,0,1);
-      
+
+      bezierMidPoint.x = map(config.loadPerspectiveCorrection(), -1, 1, 0, 1);
     } 
-    catch (Exception error){
+    catch (Exception error) {
       println(error);
     }
     ordenarBeatGrid();
@@ -239,12 +302,35 @@ class TablaVirtual { //<>// //<>// //<>//
 
   public void onMousePressed(int mX, int mY) {
 
-    tabla.detectarTocarEsquinasGrid(mX, mY);
-    tabla.detectarTocarEsquinasBox(mX, mY);
+    detectarTocarEsquinasGrid(mX, mY);
+    detectarTocarEsquinasBox(mX, mY);
+    detectarTocarPoints(mX, mY);
   }
 
   public void onMouseReleased(int mX, int mY) {
     draggingGridCorner = false;
     draggingBoxCorner = false;
+
+    if (draggingPoints) {
+
+      int selectedTrack = selectedPoint[0];
+      int selectedStep = selectedPoint[1];
+
+      PVector newPosition = fitToBoundingBoxNormalized(new PVector(mX, mY));
+      PVector offset = newPosition.sub(beatGrid[selectedTrack][selectedStep]);
+
+      //PVector offset = beatGrid[selectedPoint[0]][selectedPoint[1]].sub(newPosition);
+      beatGridOffsets[selectedPoint[0]][selectedPoint[1]].set(offset);
+      //beatGrid[selectedPoint[0]][selectedPoint[1]].set(newPosition);
+
+      ordenarBeatGrid();
+      draggingPoints = false;
+    }
+  }
+
+  public void onMouseDragged(int mX, int mY) {
+    if(draggingPoints){
+     noCursor();
+    }
   }
 }

@@ -73,16 +73,16 @@ class ComputerVisionManager {
     rect(posX, posY, contrastBoxSize * escala2, contrastBoxSize * escala2);
 
     fill(255, 0, 0);
-    ellipse( (camImage.width * escala1) + contrastBoxCenter.x * escala2,  contrastBoxCenter.y * escala2, 5, 5);
+    ellipse( (camImage.width * escala1) + contrastBoxCenter.x * escala2, contrastBoxCenter.y * escala2, 5, 5);
     noFill();
     //---
-    
-    
   }
 
 
   boolean isOn(float x, float y) {
     // x & y SHOULD ENTER NORMALIZED
+
+    //println(x + " \t\t " + y);
 
     int imageX = (int)(x * camImage.width);
     int imageY = (int)(y * camImage.height);
