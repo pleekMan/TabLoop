@@ -7,7 +7,7 @@ ControlP5 controles;
 SettingsLoader config;
 public TablaVirtual tabla;
 ComputerVisionManager cvManager;
-//SoundManager soundManager;
+SoundManager soundManager;
 
 void setup() {
   size(1000, 700);
@@ -17,13 +17,12 @@ void setup() {
   config = new SettingsLoader("configuracion.xml");
   tabla = new TablaVirtual();
   cvManager = new ComputerVisionManager(this);
-  // soundManager = new SoundManager(this);
+  soundManager = new SoundManager(this);
 
   cargarConfiguracionExterna(config);
 
   controles = new ControlP5(this);
   crearControles();
-
 }
 
 
@@ -41,12 +40,17 @@ void draw() {
 
   tabla.update();
   tabla.render();
+  
+  soundManager.update();
 
   //---
-
 }
 
 void detectGridInTable() {
+
+  int atBeat = tabla.getAtBeat();
+  soundManager.reportBeat(atBeat); // PARA SABER CUANDO CAMBIA EL BEAT
+
   // DETECTING WHETHER A gridPoint is active on the cameraImage
   PVector[][] gridPoints = tabla.getGridPoints(); // THIS GET'S THE OFFSETED COPY OF GRIDPOINTS
   for (int track=0; track < gridPoints.length; track++) {
@@ -61,7 +65,9 @@ void detectGridInTable() {
       tabla.setGridPointState(track, beat, isOn);
 
       // TRIGGER TRACK AUDIO
-      //soundManager.triggerSound(track);
+      if ((beat == atBeat) && isOn) {
+        soundManager.triggerSound(track);
+      }
     }
   }
 }
@@ -142,12 +148,12 @@ void umbralCV(float value) {
   cvManager.setUmbral(value);
 }
 
-void resetPointOffsets(boolean state){
+void resetPointOffsets(boolean state) {
   tabla.resetPointsOffset();
 }
 
-void enableAdaptiveBinarization(boolean state){
- cvManager.enableAdaptiveBinarization(state); 
+void enableAdaptiveBinarization(boolean state) {
+  cvManager.enableAdaptiveBinarization(state);
 }
 
 void crearControles() {

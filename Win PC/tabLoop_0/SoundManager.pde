@@ -1,11 +1,17 @@
 class SoundManager {
 
+  int atBeat, previousBeat;
+  boolean enableTriggering = false;
+
   SoundFile[] bombo, redo, HH, openHH, FX;
 
   String pathBombos, pathRedos, pathHHs, pathOpenHHs, pathFXs;
   String[] filenamesBombos, filenamesRedos, filenamesHHs, filenamesOpenHHs, filenamesFXs;
 
   public SoundManager(PApplet p5) {
+
+    atBeat = 1;
+    previousBeat = 0;
 
     pathBombos = sketchPath()+"/data/samples/bombos";
     pathRedos = sketchPath()+"/data/samples/redos";
@@ -43,15 +49,25 @@ class SoundManager {
     for (int i=0; i < filenamesFXs.length; i++) {
       FX[i] = new SoundFile(p5, pathFXs+"/"+filenamesFXs[i]);
     }
-
-
-
   }
 
   public void update() {
+    
+    // PARA SOLO TRIGGEAR 1 VEZ CUANDO CAMBIA EL BEAT
+    if (atBeat != previousBeat) {
+      previousBeat = atBeat;
+      enableTriggering = true;
+    } else {
+      enableTriggering = false;
+    }
   }
 
   public void triggerSound(int track) {
+    if (enableTriggering) {
+      if (track == 0) {
+        bombo[1].play();
+      }
+    }
   }
 
   private String[] listFileNames(String dir) {
@@ -64,39 +80,39 @@ class SoundManager {
       return null;
     }
   }
-  
-  
-    public void onKeyPrssd(char _k) {
-      char k = _k;
-      int j;
-      
-      if(k == '1'){
-        j =int(random(bombo.length));
-        bombo[j].play();
-      }
-      
-      if(k == '2'){
-        j =int(random(redo.length));
-        redo[j].play();
-      }
-      
-      if(k == '3'){
-        j =int(random(HH.length));
-        HH[j].play();
-      }
-      
-      if(k == '4'){
-        j =int(random(openHH.length));
-        openHH[j].play();
-      }
-      
-      if(k == '5'){
-        j =int(random(FX.length));
-        FX[j].play();
-      }
-      
 
-   }
+  public void reportBeat(int beat) {
+    atBeat = beat;
+  }
 
 
+  public void onKeyPrssd(char _k) {
+    char k = _k;
+    int j;
+
+    if (k == '1') {
+      j =int(random(bombo.length));
+      bombo[j].play();
+    }
+
+    if (k == '2') {
+      j =int(random(redo.length));
+      redo[j].play();
+    }
+
+    if (k == '3') {
+      j =int(random(HH.length));
+      HH[j].play();
+    }
+
+    if (k == '4') {
+      j =int(random(openHH.length));
+      openHH[j].play();
+    }
+
+    if (k == '5') {
+      j =int(random(FX.length));
+      FX[j].play();
+    }
+  }
 }

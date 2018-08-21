@@ -54,12 +54,14 @@ class TablaVirtual { //<>//
   }
 
   public void update() {
-    
+
     // AVANZAR TIEMPO (HACER LA LOGICA DE BPM, BIEN)
-    if(frameCount % 30 == 0){
-     atStep = (atStep + 1) % beatGrid[0].length; 
-     //println("-|| atStep: " + atStep);
+    if (frameCount % 10 == 0) {
+      atStep = (atStep + 1) % beatGrid[0].length; 
+      println("-|| atStep: " + atStep);
     }
+    text("BEAT => " + atStep, 10, 520);
+
 
     if (draggingGridCorner) {
       // CONSTRAINING mouse MOTION TO boundingBox, BEFORE CONVERTING TO BBOX NORMALIZED
@@ -140,6 +142,10 @@ class TablaVirtual { //<>//
         beatGridOffsets[track][step] = new PVector(0, 0);
       }
     }
+  }
+
+  public int getAtBeat() {
+    return atStep;
   }
 
   void ordenarBeatGrid() {
@@ -297,7 +303,7 @@ class TablaVirtual { //<>//
   public void resetPointsOffset() {
     for (int track=0; track < beatGridOffsets.length; track++) {
       for (int step=0; step < beatGridOffsets[0].length; step++) {
-        beatGridOffsets[track][step].set(0,0);
+        beatGridOffsets[track][step].set(0, 0);
       }
     }
   }
