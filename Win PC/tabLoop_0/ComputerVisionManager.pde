@@ -90,9 +90,12 @@ class ComputerVisionManager {
     int pxBrightness = -1;
 
     if (kernelAreaSize == 1) {
-      //println("Kernel = " + areaSize);
-      int pxSlot = imageX + (imageY * camImage.width);
-      pxBrightness = camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
+      if (pixelIsInsideBounds(imageX, imageY)) {
+        int pxSlot = imageX + (imageY * camImage.width);
+        pxBrightness = camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
+      } else {
+       pxBrightness = 0; 
+      }
     } else {
       //println("Kernel = " + areaSize);
       pxBrightness = evaluateArea(imageX, imageY, kernelAreaSize);
@@ -101,7 +104,6 @@ class ComputerVisionManager {
     return pxBrightness > umbral;
   }
 
-  // #### BUG: ERROR CUANDO UN PIXEL POINT ESTA EN EL BORDE DEL boundiNgBox
   int evaluateArea(int xCenter, int yCenter, int kernelSize) {
 
     int brilloAcumulativo = 0;
