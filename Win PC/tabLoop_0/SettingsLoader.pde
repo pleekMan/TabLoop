@@ -81,7 +81,7 @@ class SettingsLoader { //<>// //<>//
     PVector [][] offsets = new PVector[tracks][beats];
     XML offsetTag = config.getChild("grid/pointsOffset");
     XML[] tagChildren = offsetTag.getChildren("point");
-    
+
     println("tagChildren.length: " + tagChildren.length);
 
 
@@ -121,6 +121,14 @@ class SettingsLoader { //<>// //<>//
         newChild.setFloat("y", pointsOffset[track][beat].y);
       }
     }
+  }
+
+  public void saveAdaptiveBinarization(boolean state) {
+    config.getChild("computerVision/enableAdaptiveBinarization").setInt("value", state ? 1 : 0);
+  }
+
+  public boolean loadAdaptiveBinarization() {
+    return config.getChild("computerVision/enableAdaptiveBinarization").getInt("value") > 0.5 ? true : false;
   }
 
   public void guardar() {

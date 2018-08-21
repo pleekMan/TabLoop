@@ -6,16 +6,16 @@
       <corner x="640" y="479"/>
     </boundingBox>
     <controlCorners>
-      <point id="0" x="0.009404388" y="0.012578616"/>
-      <point id="1" x="0.9890282" y="0.014675053"/>
-      <point id="2" x="0.9890282" y="0.9895178"/>
-      <point id="3" x="0.007849294" y="0.9895178"/>
+      <point id="0" x="0.27899686" y="0.360587"/>
+      <point id="1" x="0.6081505" y="0.060796645"/>
+      <point id="2" x="0.61128527" y="0.8280922"/>
+      <point id="3" x="0.2523511" y="0.5324948"/>
     </controlCorners>
     <pointsOffset>
       <point id="0" x="0.0" y="0.0"/>
-      <point id="1" x="-0.0012608916" y="0.045997374"/>
-      <point id="2" x="-0.0031626672" y="0.052177537"/>
-      <point id="3" x="-0.0010031462" y="0.054160208"/>
+      <point id="1" x="0.0" y="0.0"/>
+      <point id="2" x="0.0" y="0.0"/>
+      <point id="3" x="0.0" y="0.0"/>
       <point id="4" x="0.0" y="0.0"/>
       <point id="5" x="0.0" y="0.0"/>
       <point id="6" x="0.0" y="0.0"/>
@@ -177,6 +177,7 @@
   </grid>
   <computerVision>
     <kernelSize value="1"/>
-    <binaryThreshold value="0.3372549"/>
+    <binaryThreshold value="0.45882353"/>
+    <enableAdaptiveBinarization value="1"/>
   </computerVision>
 </configuracion>

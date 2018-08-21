@@ -1,15 +1,13 @@
-import controlP5.*; //<>//
+import controlP5.*; //<>// //<>// //<>//
 import processing.sound.*;
 import java.util.Date;
 
 ControlP5 controles;
 
 SettingsLoader config;
-TablaVirtual tabla;
+public TablaVirtual tabla;
 ComputerVisionManager cvManager;
 //SoundManager soundManager;
-
-Timer adaptiveBinarizationTimer;
 
 void setup() {
   size(1000, 700);
@@ -21,14 +19,11 @@ void setup() {
   cvManager = new ComputerVisionManager(this);
   // soundManager = new SoundManager(this);
 
-  cargarConfiguracionExterna(config); //<>//
-  
+  cargarConfiguracionExterna(config);
+
   controles = new ControlP5(this);
   crearControles();
 
-  adaptiveBinarizationTimer = new Timer();
-  adaptiveBinarizationTimer.setDurationInSeconds(10);
-  adaptiveBinarizationTimer.start();
 }
 
 
@@ -48,18 +43,12 @@ void draw() {
   tabla.render();
 
   //---
-  //-- CADA TANTO, EJECUTAR PROCESO DE CONTRASTE ADAPTATIVO
-  if (adaptiveBinarizationTimer.isFinished()) {
-    cvManager.adaptContrast(tabla.getGridPoints());
-    adaptiveBinarizationTimer.start();
-    controles.getController("umbralCV").setValue(cvManager.umbral / 255.0);
-  }
-  //----
+
 }
 
 void detectGridInTable() {
   // DETECTING WHETHER A gridPoint is active on the cameraImage
-  PVector[][] gridPoints = tabla.getGridPoints(); // THIS GET'S AN OFFSETED COPY OF GRIDPOINTS
+  PVector[][] gridPoints = tabla.getGridPoints(); // THIS GET'S THE OFFSETED COPY OF GRIDPOINTS
   for (int track=0; track < gridPoints.length; track++) {
     for (int beat=0; beat < gridPoints[0].length; beat++) {
 
@@ -69,7 +58,7 @@ void detectGridInTable() {
       boolean isOn = cvManager.isOn(gridPoints[track][beat].x, gridPoints[track][beat].y);
 
       // SET THE z COMPONENT OF THE gridPoint PVector TO 1 (OR MORE THAN 0);
-      tabla.setGridPointState(track, beat, isOn ? 1 : 0);
+      tabla.setGridPointState(track, beat, isOn);
 
       // TRIGGER TRACK AUDIO
       //soundManager.triggerSound(track);
@@ -120,7 +109,8 @@ void guardarConfiguracionExterna() {
     config.savePerspectiveCorrection(map(tabla.getPerspectiveCorrection(), 0, 1, -1, 1));
     config.saveCvKernelSize(cvManager.kernelAreaSize);
     config.saveCvThreshold(cvManager.umbral);
-    config.savePointsOffset(tabla.getGridPointOffsets()); //<>//
+    config.savePointsOffset(tabla.getGridPointOffsets());
+    config.saveAdaptiveBinarization(cvManager.enableAdaptiveBinarization);
 
 
     config.guardar();
@@ -152,11 +142,19 @@ void umbralCV(float value) {
   cvManager.setUmbral(value);
 }
 
+void resetPointOffsets(boolean state){
+  tabla.resetPointsOffset();
+}
+
+void enableAdaptiveBinarization(boolean state){
+ cvManager.enableAdaptiveBinarization(state); 
+}
+
 void crearControles() {
 
   controles.addSlider("sliderCorreccionPerspectiva")
     .setLabel("PERSPECTIVA")
-    .setPosition(20, height - 70)
+    .setPosition(20, height - 90)
     .setWidth(200)
     .setRange(-1, 1)
     .setValue(config.loadPerspectiveCorrection())
@@ -167,7 +165,7 @@ void crearControles() {
   int kSize = cvManager.kernelAreaSize;
   controles.addSlider("kernelSize")
     .setLabel("KERNEL DE PUNTO")
-    .setPosition(20, height - 50)
+    .setPosition(20, height - 60)
     .setWidth(200)
     .setRange(1, 21)
     .setNumberOfTickMarks(11)
@@ -187,8 +185,19 @@ void crearControles() {
     .snapToTickMarks(false)
     .setValue(valorUmbral);
 
+  controles.addButton("resetPointOffsets")
+    .setLabel("RESETEAR OFFSETS DE PUNTOS")
+    .setSize(150, 20)
+    .setPosition(330, height - 90);
+
+  controles.addToggle("enableAdaptiveBinarization")
+    .setLabel("Habilitar Binarizacion Adaptativa")
+    .setSize(40, 20)
+    .setPosition(330, height - 60);
+
+
   controles.addButton("saveConfig")
     .setLabel("GUARDAR CONFIGURACION")
     .setSize(150, 20)
-    .setPosition(350, height - 50);
+    .setPosition(500, height - 60);
 }

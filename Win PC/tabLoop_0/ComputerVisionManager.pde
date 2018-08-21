@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 
 class ComputerVisionManager {
 
+  PApplet p5;
 
   Capture videoIn;
   OpenCV opencv;
@@ -13,10 +14,14 @@ class ComputerVisionManager {
   int umbral;
   int kernelAreaSize;
 
+  boolean enableAdaptiveBinarization;
   PVector contrastBoxCenter;
   int contrastBoxSize;
+  Timer adaptiveBinarizationTimer;
 
-  public ComputerVisionManager(PApplet p5) {
+
+  public ComputerVisionManager(PApplet _p5) {
+    p5 = _p5;
 
     videoIn = new Capture(p5, 1280, 960); // RESOLUCION NATIVA DE Logitech C270
     videoIn.start();
@@ -32,10 +37,26 @@ class ComputerVisionManager {
 
     kernelAreaSize = 9; // IMPARES, ASI EXISTE UN PIXEL CENTRAL
 
+    enableAdaptiveBinarization = false;
     contrastBoxCenter = new PVector(videoIn.width * 0.5, videoIn.height * 0.5);
     contrastBoxSize = int(videoIn.width * 0.25);
+
+
+    adaptiveBinarizationTimer = new Timer();
+    adaptiveBinarizationTimer.setDurationInSeconds(10);
+    if (enableAdaptiveBinarization)adaptiveBinarizationTimer.start();
   }
   public void update() {
+
+    //-- CADA TANTO, EJECUTAR PROCESO DE CONTRASTE ADAPTATIVO
+    if (enableAdaptiveBinarization) {
+      if (adaptiveBinarizationTimer.isFinished()) {
+        adaptContrast(tabla.getGridPoints()); // ESTO SE PUEDE LLAMAR ASI SOLO PORQ ESTAMOS EN PROCESSING IDE
+        adaptiveBinarizationTimer.start();
+        controles.getController("umbralCV").setValue(cvManager.umbral / 255.0);  // ESTO SE PUEDE LLAMAR ASI SOLO PORQ ESTAMOS EN PROCESSING IDE
+      }
+    }
+    //----
 
     if (videoIn.available()) {
       videoIn.read();
@@ -94,7 +115,7 @@ class ComputerVisionManager {
         int pxSlot = imageX + (imageY * camImage.width);
         pxBrightness = camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
       } else {
-       pxBrightness = 0; 
+        pxBrightness = 0;
       }
     } else {
       //println("Kernel = " + areaSize);
@@ -178,6 +199,12 @@ class ComputerVisionManager {
     //println(umbral);
   }
 
+  public void enableAdaptiveBinarization(boolean state) {
+    enableAdaptiveBinarization = state;
+    if (state)adaptiveBinarizationTimer.start();
+    println("AdaptiveBinarization = " + state);
+  }
+
 
   private boolean pixelIsInsideBounds(int x, int y) {
     return x >= 0 && x < camImage.width && y >= 0 && y < camImage.height;
@@ -188,6 +215,7 @@ class ComputerVisionManager {
       println("At CV: " + config.loadCvThreshold());
       setUmbral(config.loadCvThreshold());
       kernelAreaSize = config.loadCvKernelSize();
+      enableAdaptiveBinarization = config.loadAdaptiveBinarization();
     } 
     catch (Exception error) {
       println(error);

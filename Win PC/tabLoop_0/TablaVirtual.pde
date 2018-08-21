@@ -274,24 +274,32 @@ class TablaVirtual { //<>//
     }
     return finalOffsetedPoints;
   }
-  
-  public PVector[][] getGridPointOffsets(){
+
+  public PVector[][] getGridPointOffsets() {
     return beatGridOffsets;
   }
 
-  public void setGridPointState(int track, int step, int state) {
-    beatGrid[track][step].z =  state;
+  public void setGridPointState(int track, int step, boolean state) {
+    beatGrid[track][step].z =  state ? 1 : 0;
   }
 
   float getPerspectiveCorrection() {
     return bezierMidPoint.x;
   }
 
+  public void resetPointsOffset() {
+    for (int track=0; track < beatGridOffsets.length; track++) {
+      for (int step=0; step < beatGridOffsets[0].length; step++) {
+        beatGridOffsets[track][step].set(0,0);
+      }
+    }
+  }
+
   public void loadSettings(SettingsLoader config) {
     try {
       boundingBox = config.loadBoundingBox();
       cornerPoints = config.loadCornerPoints();
-      beatGridOffsets = config.loadPointOffset(beatGrid.length,beatGrid[0].length);
+      beatGridOffsets = config.loadPointOffset(beatGrid.length, beatGrid[0].length);
 
       bezierMidPoint.x = map(config.loadPerspectiveCorrection(), -1, 1, 0, 1);
     } 
@@ -334,8 +342,8 @@ class TablaVirtual { //<>//
   }
 
   public void onMouseDragged(int mX, int mY) {
-    if(draggingPoints){
-     noCursor();
+    if (draggingPoints) {
+      noCursor();
     }
   }
 }
