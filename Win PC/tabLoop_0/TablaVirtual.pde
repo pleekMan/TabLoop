@@ -16,6 +16,7 @@ class TablaVirtual { //<>//
   boolean draggingPoints = false;
 
   int atStep;
+  int bpm;
 
   int kernelSize = 9; // ONLY FOR VISUALIZATION PURPOSES
 
@@ -53,6 +54,12 @@ class TablaVirtual { //<>//
   }
 
   public void update() {
+    
+    // AVANZAR TIEMPO (HACER LA LOGICA DE BPM, BIEN)
+    if(frameCount % 30 == 0){
+     atStep = (atStep + 1) % beatGrid[0].length; 
+     //println("-|| atStep: " + atStep);
+    }
 
     if (draggingGridCorner) {
       // CONSTRAINING mouse MOTION TO boundingBox, BEFORE CONVERTING TO BBOX NORMALIZED
