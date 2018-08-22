@@ -6,60 +6,48 @@ class SoundManager {
   boolean enableTriggering = false;
 
   //SoundFile[] bombo, redo, HH, openHH, FX;
-  
+
   ArrayList<SoundFile> sounds;
 
   //String pathBombos, pathRedos, pathHHs, pathOpenHHs, pathFXs;
   //String[] filenamesBombos, filenamesRedos, filenamesHHs, filenamesOpenHHs, filenamesFXs;
 
-  public SoundManager(PApplet p5) {
+  public SoundManager(PApplet p5, String soundsFolder) {
+
+    // soundsFolder SHOULD BE RELATIVE TO data folder
 
     atBeat = 1;
     previousBeat = 0;
-    
-    
+
+    sounds = new ArrayList<SoundFile>();
+
+    loadSounds(soundsFolder, p5);
+
     /*
     pathBombos = sketchPath()+"/data/samples/bombos";
-    pathRedos = sketchPath()+"/data/samples/redos";
-    pathHHs = sketchPath()+"/data/samples/HHs";
-    pathOpenHHs = sketchPath()+"/data/samples/openHHs";
-    pathFXs = sketchPath()+"/data/samples/FXs";
+     
+     filenamesBombos = listFileNames(pathBombos);
+     bombo = new SoundFile[filenamesBombos.length];
+     for (int i=0; i < filenamesBombos.length; i++) {
+     bombo[i] = new SoundFile(p5, pathBombos+"/"+filenamesBombos[i]);
+     }
+     */
+  }
 
-    filenamesBombos = listFileNames(pathBombos);
+  private void loadSounds(String folder, PApplet p5) {
+    println(folder);
+    String finalPath = dataPath("") + "/" + folder +"/";
+    String[] fileNames = listFileNames(finalPath);
 
-    bombo = new SoundFile[filenamesBombos.length];
-    for (int i=0; i < filenamesBombos.length; i++) {
-      bombo[i] = new SoundFile(p5, pathBombos+"/"+filenamesBombos[i]);
+    for (int i=0; i < fileNames.length; i++) {
+      println("-|| FilePath: " + finalPath + fileNames[i]);
+      SoundFile newSound = new SoundFile(p5, finalPath + fileNames[i]);
+      sounds.add(newSound);
     }
-
-    filenamesRedos = listFileNames(pathRedos);
-    redo = new SoundFile[filenamesRedos.length];
-    for (int i=0; i < filenamesRedos.length; i++) {
-      redo[i] = new SoundFile(p5, pathRedos+"/"+filenamesRedos[i]);
-    }
-
-    filenamesHHs = listFileNames(pathHHs);
-    HH = new SoundFile[filenamesHHs.length];
-    for (int i=0; i < filenamesHHs.length; i++) {
-      HH[i] = new SoundFile(p5, pathHHs+"/"+filenamesHHs[i]);
-    }
-
-    filenamesOpenHHs = listFileNames(pathOpenHHs);
-    openHH = new SoundFile[filenamesOpenHHs.length];
-    for (int i=0; i < filenamesOpenHHs.length; i++) {
-      openHH[i] = new SoundFile(p5, pathOpenHHs+"/"+filenamesOpenHHs[i]);
-    }
-
-    filenamesFXs = listFileNames(pathFXs);
-    FX = new SoundFile[filenamesFXs.length];
-    for (int i=0; i < filenamesFXs.length; i++) {
-      FX[i] = new SoundFile(p5, pathFXs+"/"+filenamesFXs[i]);
-    }
-    */
   }
 
   public void update() {
-    
+
     // PARA SOLO TRIGGEAR 1 VEZ CUANDO CAMBIA EL BEAT
     if (atBeat != previousBeat) {
       previousBeat = atBeat;
@@ -70,23 +58,49 @@ class SoundManager {
   }
 
   public void triggerSound(int track) {
+
     if (enableTriggering) {
       if (track == 0) {
-        bombo[1].play();
+        sounds.get(0).play();
       }
     }
   }
 
+
+
   private String[] listFileNames(String dir) {
-    File file = new File(dir);
-    if (file.isDirectory()) {
-      String names[] = file.list();
-      return names;
-    } else {
-      // If it's not a directory
-      return null;
-    }
+    println("-|| Sound Files Folder: " + dir);
+
+    File folder = new File(dir);
+
+    // CREAMOS UN FILTRO PARA ACEPTAR SOLO wav, aif y mp3
+    // SIRVE PARA EVITAR CARGAR ARCHIVOS OCULTOS TAMBIEN (COMO EL ".DS_store" de MacOS)
+
+    // FileNameFilter DEFINES A FILTER INSITU
+    FilenameFilter fileNameFilter = new FilenameFilter() {
+      @Override
+        public boolean accept(File dir, String name) {
+        if (name.lastIndexOf('.')>0) {
+
+          // get last index for '.' char
+          int lastIndex = name.lastIndexOf('.');
+
+          // get extension
+          String str = name.substring(lastIndex);
+
+          // match path name extension
+          if (str.equals(".aif") || str.equals(".wav") || str.equals(".mp3")) {
+            return true;
+          }
+        }      
+        return false;
+      }
+    };
+    // END OF FileNameFilter DEFINITION
+
+    return folder.list(fileNameFilter);
   }
+
 
   public void reportBeat(int beat) {
     atBeat = beat;
@@ -94,35 +108,36 @@ class SoundManager {
 
 
   public void onKeyPressed(char _k) {
-    
+
     /*
     char k = _k;
-    int j;
-
-    if (k == '1') {
-      j =int(random(bombo.length));
-      bombo[j].play();
-    }
-
-    if (k == '2') {
-      j =int(random(redo.length));
-      redo[j].play();
-    }
-
-    if (k == '3') {
-      j =int(random(HH.length));
-      HH[j].play();
-    }
-
-    if (k == '4') {
-      j =int(random(openHH.length));
-      openHH[j].play();
-    }
-
-    if (k == '5') {
-      j =int(random(FX.length));
-      FX[j].play();
-    }
+     int j;
+     
+     if (k == '1') {
+     j =int(random(bombo.length));
+     bombo[j].play();
+     }
+     
+     if (k == '2') {
+     j =int(random(redo.length));
+     redo[j].play();
+     }
+     
+     if (k == '3') {
+     j =int(random(HH.length));
+     HH[j].play();
+     }
+     
+     if (k == '4') {
+     j =int(random(openHH.length));
+     openHH[j].play();
+     }
+     
+     if (k == '5') {
+     j =int(random(FX.length));
+     FX[j].play();
+     }
+     }
+     */
   }
-  */
 }

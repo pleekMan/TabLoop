@@ -82,14 +82,14 @@ class SettingsLoader { //<>// //<>//
     XML offsetTag = config.getChild("grid/pointsOffset");
     XML[] tagChildren = offsetTag.getChildren("point");
 
-    println("tagChildren.length: " + tagChildren.length);
+    //println("tagChildren.length: " + tagChildren.length);
 
 
     for (int track=0; track < offsets.length; track++) {
       for (int beat=0; beat < offsets[0].length; beat++) {
         int index = beat + (track * beats);
-        println("Index: " + index);
-        println(tagChildren[index].getInt("id"));
+        //println("Index: " + index);
+        //println(tagChildren[index].getInt("id"));
 
         //NON-EXISTING POINTS IN XML ARE INIT AS 0,0
         if (index < tagChildren.length) {

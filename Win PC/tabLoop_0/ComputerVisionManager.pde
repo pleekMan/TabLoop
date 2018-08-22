@@ -166,7 +166,7 @@ class ComputerVisionManager {
     contrastBoxCenter.div(4.0); // PROMEDIO
     contrastBoxCenter.x *= videoIn.width; // ESCALAR A SCREEN SPACE
     contrastBoxCenter.y *= videoIn.height;
-    println("-|| CONTRAST BOX CENTER :: X: " + contrastBoxCenter.x + " | y: " + contrastBoxCenter.y); 
+    //println("-|| CONTRAST BOX CENTER :: X: " + contrastBoxCenter.x + " | y: " + contrastBoxCenter.y); 
 
     // EXTRAER CACHITO DE IMAGEN PARA ANALIZAR
     float proporcionDeArea = 0.2;
@@ -202,7 +202,7 @@ class ComputerVisionManager {
   public void enableAdaptiveBinarization(boolean state) {
     enableAdaptiveBinarization = state;
     if (state)adaptiveBinarizationTimer.start();
-    println("AdaptiveBinarization = " + state);
+    //println("AdaptiveBinarization = " + state);
   }
 
 
@@ -212,7 +212,6 @@ class ComputerVisionManager {
 
   public void loadSettings(SettingsLoader config) {
     try {
-      println("At CV: " + config.loadCvThreshold());
       setUmbral(config.loadCvThreshold());
       kernelAreaSize = config.loadCvKernelSize();
       enableAdaptiveBinarization = config.loadAdaptiveBinarization();

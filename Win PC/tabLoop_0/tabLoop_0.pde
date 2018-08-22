@@ -1,5 +1,7 @@
 import controlP5.*; //<>//
 import java.util.Date;
+import java.io.File;
+import java.io.FilenameFilter;
 
 ControlP5 controles;
 
@@ -18,7 +20,7 @@ void setup() {
   config = new SettingsLoader("configuracion.xml");
   tabla = new TablaVirtual();
   cvManager = new ComputerVisionManager(this);
-  soundManager = new SoundManager(this);
+  soundManager = new SoundManager(this, "samples");
 
   tempo = new TempoManager();
   tempo.setBPM(120);
