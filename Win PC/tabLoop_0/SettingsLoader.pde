@@ -131,6 +131,48 @@ class SettingsLoader { //<>// //<>//
     return config.getChild("computerVision/enableAdaptiveBinarization").getInt("value") > 0.5 ? true : false;
   }
 
+  public void saveSoundChannelFiles(String[] fileNames) {
+    // BECAUSE THE fileNames ARE RECIEVED ALREADY ORDERED BY THE CHANNELS THEY BELONG TO,
+    // THE channelsToSound MAPPINGS DO NOT NEED TO BE SAVED (IT' THE SAME AS i)
+    XML channelsTag = config.getChild("sound/channels");
+
+    // CLEAR ALL CHILDS
+    channelsTag.setContent("");
+
+    for (int i=0; i < fileNames.length; i++) {
+      XML newChannel = channelsTag.addChild("channel");
+      newChannel.setInt("id", i);
+      newChannel.setString("fileName", fileNames[i]);
+      //newChannel.setInt("channel", channels[i]);
+      newChannel.setInt("channel", i);
+    }
+  }
+
+  public int[] loadSoundChannelAssignments() {
+    XML channelTag = config.getChild("sound/channels");
+    XML[] channelsInTag = channelTag.getChildren("channel");
+
+    int[] assignments = new int[channelsInTag.length];
+
+    for (int i=0; i < channelsInTag.length; i++) {
+      assignments[i] = channelsInTag[i].getInt("channel");
+    }
+    return assignments;
+  }
+
+  public String[] loadSoundFileNames() {
+    XML channelTag = config.getChild("sound/channels");
+    XML[] channelsInTag = channelTag.getChildren("channel");
+
+    String[] fileName = new String[channelsInTag.length];
+
+    for (int i=0; i < channelsInTag.length; i++) {
+      fileName[i] = channelsInTag[i].getString("fileName");
+      //println("-|| Sound FileName from XML" + fileName[i]);
+    }
+    return fileName;
+  }
+
   public void guardar() {
     saveXML(config, "data/configuracion.xml");
   }

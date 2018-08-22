@@ -73,8 +73,8 @@ class ComputerVisionManager {
 
   public void render() {
 
-    float escala1 = 0.5; // IMAGEN OPERADA
-    float escala2 = 0.25; // IMAGEN DE ENTRADA
+    float escala1 = 0.1; //0.5 // IMAGEN OPERADA
+    float escala2 = 0.1; //0.25 // IMAGEN DE ENTRADA
 
     // IMAGEN DE ENTRADA (escala2)
     image(videoIn, camImage.width * escala1, 0, videoIn.width * escala2, videoIn.height * escala2);

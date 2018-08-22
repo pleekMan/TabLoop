@@ -177,7 +177,21 @@
   </grid>
   <computerVision>
     <kernelSize value="1"/>
-    <binaryThreshold value="0.45882353"/>
-    <enableAdaptiveBinarization value="1"/>
+    <binaryThreshold value="0.34509805"/>
+    <enableAdaptiveBinarization value="0"/>
   </computerVision>
+  <sound>
+    <channels>
+      <channel channel="0" fileName="bombo_Fat Kick.aif" id="0"/>
+      <channel channel="1" fileName="bombo_Bd_07.wav" id="1"/>
+      <channel channel="2" fileName="fx_ZapHit.wav" id="2"/>
+      <channel channel="3" fileName="fx_electriccurrent.wav" id="3"/>
+      <channel channel="4" fileName="hiHat_02.wav" id="4"/>
+      <channel channel="5" fileName="hiHat_Jazz Tight.aif" id="5"/>
+      <channel channel="6" fileName="openHiHat_2.aif" id="6"/>
+      <channel channel="7" fileName="openHiHat_Drum Hit03.wav" id="7"/>
+      <channel channel="8" fileName="snareDrum_Dry Ring Snare.aif" id="8"/>
+      <channel channel="9" fileName="snareDrum_Rimshot Snare 2.aif" id="9"/>
+    </channels>
+  </sound>
 </configuracion>

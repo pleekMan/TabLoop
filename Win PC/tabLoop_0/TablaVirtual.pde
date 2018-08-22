@@ -5,7 +5,6 @@ class TablaVirtual { //<>//
   PVector[][] beatGrid; // [TRACK][STEP] NORMALIZED // Z COMPONENT IS USED TO AS BINARY ON/OFF
   PVector[][] beatGridOffsets; // FOR INDIVIDUAL POINT OFFSETTING
   PVector bezierMidPoint = new PVector(0.5, 0.5); // 0 -> 1
-  //PVector gridOffset = new PVector(0.025,0.05);
 
   boolean calibrationMode = true;
   int selectedGridCorner = 0;
@@ -18,7 +17,7 @@ class TablaVirtual { //<>//
   int atStep;
   int bpm;
 
-  int kernelSize = 9; // ONLY FOR VISUALIZATION PURPOSES
+  int kernelSize = 9; // ONLY FOR VISUALIZATION PURPOSES (mmhh not really..!)
 
   public TablaVirtual() {
 
@@ -54,14 +53,14 @@ class TablaVirtual { //<>//
   }
 
   public void update() {
-    
+
     /*
     // AVANZAR TIEMPO (HACER LA LOGICA DE BPM, BIEN)
-    if (frameCount % 10 == 0) {
-      atStep = (atStep + 1) % beatGrid[0].length; 
-      println("-|| atStep: " + atStep);
-    }
-    */
+     if (frameCount % 10 == 0) {
+     atStep = (atStep + 1) % beatGrid[0].length; 
+     println("-|| atStep: " + atStep);
+     }
+     */
     text("BEAT => " + atStep, 10, 520);
 
 
@@ -125,6 +124,10 @@ class TablaVirtual { //<>//
       // DIBUJAR CORNER GIZMOS
       dibujarCornerGizmos();
 
+      // DIBUJAR PLAYHEAD
+      dibujarPlayHead();
+
+
       // DIBUJAR POINTS CROSSHAIR
       // EL CALCULO DE OFFSETS SE HACE EN mouseReleased
       if (draggingPoints) {
@@ -140,7 +143,7 @@ class TablaVirtual { //<>//
 
   public void stepTime() {
     atStep = (atStep + 1) % beatGrid[0].length; 
-    println("-|| atStep: " + atStep);
+    //println("-|| atStep: " + atStep);
   }
 
   private void initPointsOffsets() {
@@ -266,15 +269,20 @@ class TablaVirtual { //<>//
     ellipse(boundingBox[1].x, boundingBox[1].y, 15, 15);
   }
 
+  private void dibujarPlayHead() {
+    PVector playHeadTop = fitToBoundingBoxScreen(beatGrid[0][atStep]);
+    PVector playHeadBottom = fitToBoundingBoxScreen(beatGrid[beatGrid.length - 1][atStep]);
+    stroke(255, 0, 255);
+    line(playHeadTop.x, playHeadTop.y, playHeadBottom.x, playHeadBottom.y);
+  }
 
   private color colorearPuntos(int track, int step) {
 
     // CORNER POINTS SON ROJOS. TODO LO DEMAS, BLANCO
-
     if ((track == 0 && step ==0) || (track == beatGrid.length - 1 && step ==0) || (track == 0 &&  step == beatGrid[0].length - 1) || (track == beatGrid.length - 1 && step == beatGrid[0].length - 1)) {
       return color (255, 0, 0);
     } else {
-      return color (255, 255, 0);
+      return color (0, 0, 255);
     }
   }
 

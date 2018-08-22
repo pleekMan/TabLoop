@@ -118,12 +118,15 @@ void keyPressed() {
     // cvManager.adaptContrast(tabla.getGridPoints());
   }
   //soundManager.onKeyPressed(key);
+  soundManager.onKeyPressed(key);
 }
 
 void cargarConfiguracionExterna(SettingsLoader config) {
   if (config.isLoaded()) {
     tabla.loadSettings(config);
     cvManager.loadSettings(config);
+    soundManager.loadSettings(config, "samples", this);
+
     println("-|| CONFIGURACION ANTERIOR CARGADA");
   } else {
     println("-|| LA CONFIGURACION ANTERIOR NO SE CARGO.\n-||FIJATE QUE ONDA CON EL ARCHIVO configuracion.xml EN LA CARPETA data");
@@ -139,6 +142,7 @@ void guardarConfiguracionExterna() {
     config.saveCvThreshold(cvManager.umbral);
     config.savePointsOffset(tabla.getGridPointOffsets());
     config.saveAdaptiveBinarization(cvManager.enableAdaptiveBinarization);
+    config.saveSoundChannelFiles(soundManager.getFileNamesOrdered());
 
 
     config.guardar();
@@ -221,7 +225,8 @@ void crearControles() {
   controles.addToggle("enableAdaptiveBinarization")
     .setLabel("Habilitar Binarizacion Adaptativa")
     .setSize(40, 20)
-    .setPosition(330, height - 60);
+    .setPosition(330, height - 60)
+    .setValue(false);
 
 
   controles.addButton("saveConfig")

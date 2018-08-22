@@ -5,12 +5,10 @@ class SoundManager {
   int atBeat, previousBeat;
   boolean enableTriggering = false;
 
-  //SoundFile[] bombo, redo, HH, openHH, FX;
-
   ArrayList<SoundFile> sounds;
+  ArrayList<String> soundsFileName;
+  int[] channelToSound; // CHANNEL MAPPINGS (LINK sounds LIST TO CHANNELS)
 
-  //String pathBombos, pathRedos, pathHHs, pathOpenHHs, pathFXs;
-  //String[] filenamesBombos, filenamesRedos, filenamesHHs, filenamesOpenHHs, filenamesFXs;
 
   public SoundManager(PApplet p5, String soundsFolder) {
 
@@ -20,30 +18,16 @@ class SoundManager {
     previousBeat = 0;
 
     sounds = new ArrayList<SoundFile>();
+    soundsFileName = new ArrayList<String>();
+    //loadSounds(soundsFolder, p5);
 
-    loadSounds(soundsFolder, p5);
-
+    channelToSound = new int[sounds.size()];
+    // TEMPORARIO
     /*
-    pathBombos = sketchPath()+"/data/samples/bombos";
-     
-     filenamesBombos = listFileNames(pathBombos);
-     bombo = new SoundFile[filenamesBombos.length];
-     for (int i=0; i < filenamesBombos.length; i++) {
-     bombo[i] = new SoundFile(p5, pathBombos+"/"+filenamesBombos[i]);
+    for (int i=0; i < channelToSound.length; i++) {
+     channelToSound[i] = i;
      }
      */
-  }
-
-  private void loadSounds(String folder, PApplet p5) {
-    println(folder);
-    String finalPath = dataPath("") + "/" + folder +"/";
-    String[] fileNames = listFileNames(finalPath);
-
-    for (int i=0; i < fileNames.length; i++) {
-      println("-|| FilePath: " + finalPath + fileNames[i]);
-      SoundFile newSound = new SoundFile(p5, finalPath + fileNames[i]);
-      sounds.add(newSound);
-    }
   }
 
   public void update() {
@@ -60,15 +44,58 @@ class SoundManager {
   public void triggerSound(int track) {
 
     if (enableTriggering) {
-      if (track == 0) {
-        sounds.get(0).play();
+      if (track < sounds.size()) { // TEMP, POR SI SE CARGARON MENOS sounds QUE tracks EXISTENTES
+        if (track == 0) { // TESTING
+          getSoundAtTrack(track).play();
+        }
       }
     }
   }
 
+  private SoundFile getSoundAtTrack(int track) {
+    return sounds.get(channelToSound[track]);
+  }
+
+  public void reportBeat(int beat) {
+    atBeat = beat;
+  }
+
+  //
+  private void loadSounds(String folder, PApplet p5) {
+    //println(folder);
+
+    String finalPath = dataPath("") + "/" + folder +"/";
+    String[] fileNames = listFileNames(finalPath);
+
+    for (int i=0; i < fileNames.length; i++) {
+      //println("-|| FilePath: " + finalPath + fileNames[i]);
+      SoundFile newSound = new SoundFile(p5, finalPath + fileNames[i]);
+      newSound.amp(0.2);
+      sounds.add(newSound);
+
+      soundsFileName.add(fileNames[i]);
+    }
+  }
+
+  private void loadSounds(String folder, String[] fileNames, PApplet p5) {
+    println(folder);
+
+    String finalPath = dataPath("") + "/" + folder +"/";
+    //String[] fileNames = listFileNames(finalPath);
+
+    for (int i=0; i < fileNames.length; i++) {
+      println("-|| FilePath: " + finalPath + fileNames[i]);
+      SoundFile newSound = new SoundFile(p5, finalPath + fileNames[i]);
+      newSound.amp(0.2);
+      sounds.add(newSound);
+
+      soundsFileName.add(fileNames[i]);
+    }
+  }
 
 
   private String[] listFileNames(String dir) {
+
     println("-|| Sound Files Folder: " + dir);
 
     File folder = new File(dir);
@@ -89,7 +116,7 @@ class SoundManager {
           String str = name.substring(lastIndex);
 
           // match path name extension
-          if (str.equals(".aif") || str.equals(".wav") || str.equals(".mp3")) {
+          if (str.equals(".aif") || str.equals(".aiff") || str.equals(".wav") || str.equals(".mp3")) {
             return true;
           }
         }      
@@ -101,43 +128,49 @@ class SoundManager {
     return folder.list(fileNameFilter);
   }
 
+  public void loadSettings(SettingsLoader config, String soundFolder, PApplet p5) {
+    // ESTA FUNCION ES MEDIO QUILOMBO PORQUE SoundFile INICIALIZA CON un PApplet(this). ?Para Que?
+    channelToSound = config.loadSoundChannelAssignments();
+    String[] fNames = config.loadSoundFileNames();
 
-  public void reportBeat(int beat) {
-    atBeat = beat;
-  }
+    loadSounds(soundFolder, fNames, p5);
 
-
-  public void onKeyPressed(char _k) {
+    printChannelMappings();
 
     /*
-    char k = _k;
-     int j;
-     
-     if (k == '1') {
-     j =int(random(bombo.length));
-     bombo[j].play();
-     }
-     
-     if (k == '2') {
-     j =int(random(redo.length));
-     redo[j].play();
-     }
-     
-     if (k == '3') {
-     j =int(random(HH.length));
-     HH[j].play();
-     }
-     
-     if (k == '4') {
-     j =int(random(openHH.length));
-     openHH[j].play();
-     }
-     
-     if (k == '5') {
-     j =int(random(FX.length));
-     FX[j].play();
-     }
-     }
+    println("-||");
+     println("-|| SOUND FILE NAMES:");
+     printArray(fNames);
      */
+  }
+
+  public int[] getChannelAssignment() {
+    return channelToSound;
+  }
+
+  public String[] getFileNamesOrdered() {
+    // ALWAYS RETURN FILENAMES ORDERED BY TRACK/CHANNEL
+    String[] orderedFileNames = new String[channelToSound.length];
+    for (int i=0; i < channelToSound.length; i++) {
+      orderedFileNames[i] = soundsFileName.get(channelToSound[i]);
+    }
+    return orderedFileNames;
+    //String[] fNames = new String[soundsFileName.size()];
+    //fNames = soundsFileName.toArray(fNames);
+    //return fNames;
+  }
+
+  public void printChannelMappings() {
+    for (int i=0; i < channelToSound.length; i++) {
+      println("-|| Channel |" + i +"| => \t (" + channelToSound[i] + ") :: " + soundsFileName.get(channelToSound[i]));
+    }
+  }
+
+  public void onKeyPressed(char k) {
+    if (k == 'c') {
+      channelToSound[0] = 2;
+      channelToSound[2] = 0;
+      printChannelMappings();
+    }
   }
 }
