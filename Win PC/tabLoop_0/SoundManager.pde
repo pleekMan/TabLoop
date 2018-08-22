@@ -1,18 +1,24 @@
+import processing.sound.*;
+
 class SoundManager {
 
   int atBeat, previousBeat;
   boolean enableTriggering = false;
 
-  SoundFile[] bombo, redo, HH, openHH, FX;
+  //SoundFile[] bombo, redo, HH, openHH, FX;
+  
+  ArrayList<SoundFile> sounds;
 
-  String pathBombos, pathRedos, pathHHs, pathOpenHHs, pathFXs;
-  String[] filenamesBombos, filenamesRedos, filenamesHHs, filenamesOpenHHs, filenamesFXs;
+  //String pathBombos, pathRedos, pathHHs, pathOpenHHs, pathFXs;
+  //String[] filenamesBombos, filenamesRedos, filenamesHHs, filenamesOpenHHs, filenamesFXs;
 
   public SoundManager(PApplet p5) {
 
     atBeat = 1;
     previousBeat = 0;
-
+    
+    
+    /*
     pathBombos = sketchPath()+"/data/samples/bombos";
     pathRedos = sketchPath()+"/data/samples/redos";
     pathHHs = sketchPath()+"/data/samples/HHs";
@@ -49,6 +55,7 @@ class SoundManager {
     for (int i=0; i < filenamesFXs.length; i++) {
       FX[i] = new SoundFile(p5, pathFXs+"/"+filenamesFXs[i]);
     }
+    */
   }
 
   public void update() {
@@ -86,7 +93,9 @@ class SoundManager {
   }
 
 
-  public void onKeyPrssd(char _k) {
+  public void onKeyPressed(char _k) {
+    
+    /*
     char k = _k;
     int j;
 
@@ -115,4 +124,5 @@ class SoundManager {
       FX[j].play();
     }
   }
+  */
 }

@@ -1,5 +1,4 @@
-import controlP5.*; //<>// //<>// //<>//
-import processing.sound.*;
+import controlP5.*; //<>//
 import java.util.Date;
 
 ControlP5 controles;
@@ -8,16 +7,22 @@ SettingsLoader config;
 public TablaVirtual tabla;
 ComputerVisionManager cvManager;
 SoundManager soundManager;
+TempoManager tempo;
 
 void setup() {
   size(1000, 700);
   cursor(HAND);
+  frameRate(30);
 
 
   config = new SettingsLoader("configuracion.xml");
   tabla = new TablaVirtual();
   cvManager = new ComputerVisionManager(this);
   soundManager = new SoundManager(this);
+
+  tempo = new TempoManager();
+  tempo.setBPM(120);
+  tempo.start();
 
   cargarConfiguracionExterna(config);
 
@@ -28,8 +33,15 @@ void setup() {
 
 void draw() {
   background(0);
-  text("FR: " + frameRate, 10, 10);
 
+  // TEMPO STUFF
+  tempo.update();
+  if (tempo.isOnBeat()) {
+    tabla.stepTime();
+    soundManager.reportBeat(tabla.atStep); // PARA SABER CUANDO CAMBIA EL BEAT
+  }
+  tempo.renderTapButton(50, 550);
+  //-------
 
   // DETECTING WHETHER A gridPoint is active on the cameraImage
   detectGridInTable();
@@ -40,16 +52,20 @@ void draw() {
 
   tabla.update();
   tabla.render();
-  
+
   soundManager.update();
 
   //---
+
+  //- OTHER STUF ----
+  drawMouseCoordinates();
 }
 
 void detectGridInTable() {
 
-  int atBeat = tabla.getAtBeat();
-  soundManager.reportBeat(atBeat); // PARA SABER CUANDO CAMBIA EL BEAT
+
+
+  //int atBeat = tabla.getAtBeat();
 
   // DETECTING WHETHER A gridPoint is active on the cameraImage
   PVector[][] gridPoints = tabla.getGridPoints(); // THIS GET'S THE OFFSETED COPY OF GRIDPOINTS
@@ -65,7 +81,7 @@ void detectGridInTable() {
       tabla.setGridPointState(track, beat, isOn);
 
       // TRIGGER TRACK AUDIO
-      if ((beat == atBeat) && isOn) {
+      if ((beat == tabla.atStep) && isOn) {
         soundManager.triggerSound(track);
       }
     }
@@ -76,6 +92,10 @@ void detectGridInTable() {
 
 void mousePressed() {
   tabla.onMousePressed(mouseX, mouseY);
+
+  if (tempo.isOverTapMarker(mouseX, mouseY)) {
+    tempo.tap();
+  }
 }
 
 void mouseReleased() {
@@ -95,7 +115,7 @@ void keyPressed() {
   if (key == ' ') {
     // cvManager.adaptContrast(tabla.getGridPoints());
   }
-  //soundManager.onKeyPrssd(key);
+  //soundManager.onKeyPressed(key);
 }
 
 void cargarConfiguracionExterna(SettingsLoader config) {
@@ -206,4 +226,11 @@ void crearControles() {
     .setLabel("GUARDAR CONFIGURACION")
     .setSize(150, 20)
     .setPosition(500, height - 60);
+}
+
+public void drawMouseCoordinates() {
+  // MOUSE POSITION
+  fill(255, 0, 0);
+  text("FR: " + frameRate, width - 100, height - 20);
+  text("X: " + mouseX + " / Y: " + mouseY, mouseX, mouseY);
 }

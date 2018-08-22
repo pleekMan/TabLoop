@@ -54,12 +54,14 @@ class TablaVirtual { //<>//
   }
 
   public void update() {
-
+    
+    /*
     // AVANZAR TIEMPO (HACER LA LOGICA DE BPM, BIEN)
     if (frameCount % 10 == 0) {
       atStep = (atStep + 1) % beatGrid[0].length; 
       println("-|| atStep: " + atStep);
     }
+    */
     text("BEAT => " + atStep, 10, 520);
 
 
@@ -134,6 +136,11 @@ class TablaVirtual { //<>//
         line(mouseX + 3, mouseY, mouseX + 10, mouseY );
       }
     }
+  }
+
+  public void stepTime() {
+    atStep = (atStep + 1) % beatGrid[0].length; 
+    println("-|| atStep: " + atStep);
   }
 
   private void initPointsOffsets() {
