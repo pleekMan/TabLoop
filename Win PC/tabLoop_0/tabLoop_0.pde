@@ -5,14 +5,14 @@ import java.io.FilenameFilter;
 
 ControlP5 controles;
 
-SettingsLoader config;
+public SettingsLoader config;
 public TablaVirtual tabla;
-ComputerVisionManager cvManager;
-SoundManager soundManager;
-TempoManager tempo;
+public ComputerVisionManager cvManager;
+public SoundManager soundManager;
+public TempoManager tempo;
 
 void setup() {
-  size(1000, 700);
+  size(960, 700);
   cursor(HAND);
   frameRate(30);
 
@@ -94,7 +94,6 @@ void detectGridInTable() {
 
 void mousePressed() {
   tabla.onMousePressed(mouseX, mouseY);
-
   if (tempo.isOverTapMarker(mouseX, mouseY)) {
     tempo.tap();
   }
@@ -182,6 +181,17 @@ void enableAdaptiveBinarization(boolean state) {
   cvManager.enableAdaptiveBinarization(state);
 }
 
+void imageViewScaling(boolean state) {
+  cvManager.setImageMinimized(state);
+  if (state) {
+    controles.getController("imageViewScaling").setLabel("MAXIMIZAR");
+    controles.getController("imageViewScaling").setPosition(width - 50, 100);
+  } else {
+    controles.getController("imageViewScaling").setLabel("MINIMIZAR");
+    controles.getController("imageViewScaling").setPosition(width - 50, 240);
+  }
+}
+
 void crearControles() {
 
   controles.addSlider("sliderCorreccionPerspectiva")
@@ -233,6 +243,11 @@ void crearControles() {
     .setLabel("GUARDAR CONFIGURACION")
     .setSize(150, 20)
     .setPosition(500, height - 60);
+
+  controles.addToggle("imageViewScaling")
+    .setLabel("MINIMIZAR")
+    .setSize(50, 20)
+    .setPosition(width - 50, 240);
 }
 
 public void drawMouseCoordinates() {

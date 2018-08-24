@@ -9,7 +9,7 @@ class ComputerVisionManager {
   Capture videoIn;
   OpenCV opencv;
 
-  PImage camImage;
+  PImage binaryImage;
   PVector imageScreenPos;
   int umbral;
   int kernelAreaSize;
@@ -18,6 +18,8 @@ class ComputerVisionManager {
   PVector contrastBoxCenter;
   int contrastBoxSize;
   Timer adaptiveBinarizationTimer;
+
+  boolean isCamImageMinimized = false;
 
 
   public ComputerVisionManager(PApplet _p5) {
@@ -29,7 +31,7 @@ class ComputerVisionManager {
     opencv = new OpenCV(p5, videoIn);
 
 
-    camImage = loadImage("camView.png");
+    binaryImage = loadImage("camView.png");
     imageScreenPos = new PVector(0, 0);
     umbral = 127;
     println("-|| UMBRAL: " + umbral);
@@ -67,34 +69,52 @@ class ComputerVisionManager {
     opencv.threshold(umbral);
     opencv.invert();
 
-    camImage = opencv.getOutput();
+    binaryImage = opencv.getOutput();
   }
 
 
   public void render() {
 
-    float escala1 = 0.1; //0.5 // IMAGEN OPERADA
-    float escala2 = 0.1; //0.25 // IMAGEN DE ENTRADA
+    PVector rawImagePos = new PVector();
+    PVector binaryImagePos = new PVector();
+    float binaryImageScale = 0.5; //0.5 // IMAGEN OPERADA
+    float rawImageScale = 0.25; //0.25 // IMAGEN DE ENTRADA
+
+    if (!isCamImageMinimized) {
+      // MODO DEBUG
+      rawImageScale = 0.25;
+      binaryImageScale = 0.5;
+      binaryImagePos.set(0, 0);
+      rawImagePos.set(binaryImagePos.x + (binaryImage.width * binaryImageScale), 0);
+    } else {
+      // MODO PERFORMANCE
+      rawImageScale = 0.1;
+      binaryImageScale = 0.1;
+      rawImagePos.set(width - (videoIn.width * rawImageScale), 0);
+      binaryImagePos.set(rawImagePos.x - (binaryImage.width * binaryImageScale), 0);
+    }
+
+
 
     // IMAGEN DE ENTRADA (escala2)
-    image(videoIn, camImage.width * escala1, 0, videoIn.width * escala2, videoIn.height * escala2);
+    image(videoIn,rawImagePos.x, rawImagePos.y, videoIn.width * rawImageScale, videoIn.height * rawImageScale);
 
     // IMAGEN OPERADA (escala1)
-    image(camImage, 0, 0, camImage.width * escala1, camImage.height * escala1);
+    image(binaryImage, binaryImagePos.x, binaryImagePos.y, binaryImage.width * binaryImageScale, binaryImage.height * binaryImageScale);
 
     // DIBUJAR CONTORNO DE LA IMAGEN
     noFill();
     stroke(255, 0, 0);
-    rect(0, 0, camImage.width *escala1, camImage.height * escala1);
+    rect(binaryImagePos.x, binaryImagePos.y, binaryImage.width *binaryImageScale, binaryImage.height * binaryImageScale);
 
     // DIBUJAR AREA DE CONTRASTE ADAPTATIVO (SOBRE IMAGEN DE ENTRADA)
     stroke(0, 0, 255);
-    float posX = (camImage.width * escala1) + ((contrastBoxCenter.x - (contrastBoxSize * 0.5)) * escala2);
-    float posY = (contrastBoxCenter.y - (contrastBoxSize * 0.5)) * escala2;
-    rect(posX, posY, contrastBoxSize * escala2, contrastBoxSize * escala2);
+    float posX = rawImagePos.x + ((contrastBoxCenter.x - (contrastBoxSize * 0.5)) * rawImageScale);
+    float posY = (contrastBoxCenter.y - (contrastBoxSize * 0.5)) * rawImageScale;
+    rect(posX, posY, contrastBoxSize * rawImageScale, contrastBoxSize * rawImageScale);
 
     fill(255, 0, 0);
-    ellipse( (camImage.width * escala1) + contrastBoxCenter.x * escala2, contrastBoxCenter.y * escala2, 5, 5);
+    ellipse( rawImagePos.x + contrastBoxCenter.x * rawImageScale, contrastBoxCenter.y * rawImageScale, 5, 5);
     noFill();
     //---
   }
@@ -105,15 +125,15 @@ class ComputerVisionManager {
 
     //println(x + " \t\t " + y);
 
-    int imageX = (int)(x * camImage.width);
-    int imageY = (int)(y * camImage.height);
+    int imageX = (int)(x * binaryImage.width);
+    int imageY = (int)(y * binaryImage.height);
 
     int pxBrightness = -1;
 
     if (kernelAreaSize == 1) {
       if (pixelIsInsideBounds(imageX, imageY)) {
-        int pxSlot = imageX + (imageY * camImage.width);
-        pxBrightness = camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
+        int pxSlot = imageX + (imageY * binaryImage.width);
+        pxBrightness = binaryImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
       } else {
         pxBrightness = 0;
       }
@@ -139,8 +159,8 @@ class ComputerVisionManager {
         int pixelY = yCenter + y;
 
         if (pixelIsInsideBounds(pixelX, pixelY)) {
-          int pxSlot = pixelX + (pixelY * camImage.width);
-          brilloAcumulativo += camImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
+          int pxSlot = pixelX + (pixelY * binaryImage.width);
+          brilloAcumulativo += binaryImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
         }
       }
     }
@@ -207,7 +227,11 @@ class ComputerVisionManager {
 
 
   private boolean pixelIsInsideBounds(int x, int y) {
-    return x >= 0 && x < camImage.width && y >= 0 && y < camImage.height;
+    return x >= 0 && x < binaryImage.width && y >= 0 && y < binaryImage.height;
+  }
+  
+  public void setImageMinimized(boolean state){
+   isCamImageMinimized = state; 
   }
 
   public void loadSettings(SettingsLoader config) {
