@@ -61,7 +61,7 @@ class TablaVirtual { //<>//
      println("-|| atStep: " + atStep);
      }
      */
-    text("BEAT => " + atStep, 10, 520);
+    //text("BEAT => " + atStep, 10, 520);
 
 
     if (draggingGridCorner) {
@@ -138,6 +138,9 @@ class TablaVirtual { //<>//
         line(mouseX - 10, mouseY, mouseX - 3, mouseY );
         line(mouseX + 3, mouseY, mouseX + 10, mouseY );
       }
+
+      // DRAW MINI-SEQUENCER AT TEMPO MENU
+      drawMiniSequencer();
     }
   }
 
@@ -335,6 +338,40 @@ class TablaVirtual { //<>//
       println(error);
     }
     ordenarBeatGrid();
+  }
+
+  public void drawMiniSequencer() {
+
+    int posX = 790;
+    int posY = 580;
+    int w = 80;
+    int h = 15;
+    int steps = beatGrid[0].length;
+    int separation = int(float(w) / steps);
+
+    // LINES
+    noFill();
+    stroke(colorPalette.BACKGROUND_LIGHT);
+    for (int i=1; i < steps; i++) {
+      line(posX + (i * separation), posY, posX + (i * separation), posY + h );
+    }
+
+
+    //  PLAYHEAD
+    noStroke();
+    fill(colorPalette.HIGHLIGHT_RED);
+    float headPosX = posX + (separation * atStep);
+    rect(headPosX, posY, separation, h);
+
+
+    // BACK RECTANGLE
+    noFill();
+    stroke(colorPalette.BACKGROUND_LIGHT);
+    rect(posX, posY, w, h);
+    
+    noStroke();
+    fill(colorPalette.HIGHLIGHT_RED);
+    text(atStep + 1,posX + w + 5, posY + (h * 0.8));
   }
 
 

@@ -13,6 +13,7 @@ public class TempoManager {
   // VIZ
   PVector beatMarkerPos;
   float beatMarkerSize;
+  color beatMarkerColor;
   float beatMarkerOpacity = 1;
 
   public TempoManager() {
@@ -24,8 +25,10 @@ public class TempoManager {
     setBPM(60);
     onBeat = false;
 
-    beatMarkerPos = new PVector(1000, 750);
-    beatMarkerSize = 50;
+    beatMarkerPos = new PVector(758, 596);
+    beatMarkerSize = 40;
+
+    beatMarkerColor = colorPalette.HIGHLIGHT_GREEN;
   }
 
   public void update() {
@@ -64,10 +67,14 @@ public class TempoManager {
     beatMarkerOpacity -= 0.1;
   }
 
-  public void renderTapButton(int posX, int posY) {
+  public void renderTapButton() {
+    renderTapButton(beatMarkerPos.x, beatMarkerPos.y);
+  }
+
+  public void renderTapButton(float posX, float posY) {
 
     beatMarkerPos.set(posX, posY);
-    
+
     stroke(127);
     noFill();
     ellipse(beatMarkerPos.x, beatMarkerPos.y, beatMarkerSize, beatMarkerSize);
@@ -77,16 +84,18 @@ public class TempoManager {
       beatMarkerOpacity = 1;
     }
 
-    fill(0, 255, 127, (beatMarkerOpacity * 255) % 255);
+    beatMarkerColor = color(191, 205, 49, (beatMarkerOpacity * 255) % 255);
+    fill(beatMarkerColor);
     ellipse(beatMarkerPos.x, beatMarkerPos.y, beatMarkerSize * 0.8f, beatMarkerSize * 0.8f);
 
-    fill(0, 255, 200);
-    text("BPM :: " + bpm + " / " + beatDivision, beatMarkerPos.x + 40, beatMarkerPos.y);
-    if (onTapTempoMode) {
-      fill(255,0,0);
-      text("|| TAPPING ||", beatMarkerPos.x + 40, beatMarkerPos.y + 20);
-    }
 
+    if (onTapTempoMode) {
+      fill(colorPalette.HIGHLIGHT_RED);
+      text("TAPPING", beatMarkerPos.x - 25, beatMarkerPos.y + 34);
+    } else {
+      fill(255);
+      text("TAP", beatMarkerPos.x - 10, beatMarkerPos.y + 34);
+    }
   }
 
   public void setBPM(int _bpm) {
@@ -136,5 +145,4 @@ public class TempoManager {
   public boolean isOverTapMarker(float x, float y) {
     return dist(x, y, beatMarkerPos.x, beatMarkerPos.y) < beatMarkerSize * 0.5;
   }
-
 }

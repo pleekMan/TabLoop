@@ -45,9 +45,9 @@ class SoundManager {
 
     if (enableTriggering) {
       if (track < sounds.size()) { // TEMP, POR SI SE CARGARON MENOS sounds QUE tracks EXISTENTES
-        if (track == 0) { // TESTING
+        //if (track == 0) { // TESTING
           getSoundAtTrack(track).play();
-        }
+       // }
       }
     }
   }

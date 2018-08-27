@@ -6,10 +6,10 @@
       <corner x="640" y="479"/>
     </boundingBox>
     <controlCorners>
-      <point id="0" x="0.27899686" y="0.360587"/>
-      <point id="1" x="0.6081505" y="0.060796645"/>
-      <point id="2" x="0.61128527" y="0.8280922"/>
-      <point id="3" x="0.2523511" y="0.5324948"/>
+      <point id="0" x="0.23197491" y="0.4192872"/>
+      <point id="1" x="0.87774295" y="0.15303983"/>
+      <point id="2" x="0.8683386" y="0.8951782"/>
+      <point id="3" x="0.22100313" y="0.706499"/>
     </controlCorners>
     <pointsOffset>
       <point id="0" x="0.0" y="0.0"/>
@@ -173,11 +173,11 @@
       <point id="158" x="0.0" y="0.0"/>
       <point id="159" x="0.0" y="0.0"/>
     </pointsOffset>
-    <perspectiveCorrection value="-0.25"/>
+    <perspectiveCorrection value="0.09473693"/>
   </grid>
   <computerVision>
-    <kernelSize value="1"/>
-    <binaryThreshold value="0.34509805"/>
+    <kernelSize value="11"/>
+    <binaryThreshold value="0.35686275"/>
     <enableAdaptiveBinarization value="0"/>
   </computerVision>
   <sound>
