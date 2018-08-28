@@ -123,6 +123,28 @@ class SettingsLoader { //<>// //<>//
     }
   }
 
+  public void saveStepwiseOffsets(float[] stepOffsets) {
+    XML offsetTag = config.getChild("grid/stepwiseOffset");
+    offsetTag.setContent("");
+
+    for (int i=0; i < stepOffsets.length; i++) {
+      XML newChild = offsetTag.addChild("point");
+      newChild.setFloat("offset", stepOffsets[i]);
+    }
+  }
+
+  public float[] loadStepwiseOffsets() {
+    XML offsetTag = config.getChild("grid/stepwiseOffset");
+    XML[] tagChildren = offsetTag.getChildren("point");
+
+    float [] stepOffsets = new float[tagChildren.length];
+
+    for (int i=0; i < stepOffsets.length; i++) {
+      stepOffsets[i] = tagChildren[i].getFloat("offset");
+    }
+    return stepOffsets;
+  }
+
   public void saveAdaptiveBinarization(boolean state) {
     config.getChild("computerVision/enableAdaptiveBinarization").setInt("value", state ? 1 : 0);
   }

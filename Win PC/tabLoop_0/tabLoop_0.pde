@@ -52,11 +52,11 @@ void draw() {
   //-------
 
   // DETECTING WHETHER A gridPoint is active on the cameraImage
-  //detectGridInTable();
+  detectGridInTable();
   // -----
 
-  //cvManager.update();
-  //cvManager.render();
+  cvManager.update();
+  cvManager.render();
 
   tabla.update();
   tabla.render();
@@ -150,6 +150,7 @@ void guardarConfiguracionExterna() {
     config.savePointsOffset(tabla.getGridPointOffsets());
     config.saveAdaptiveBinarization(cvManager.enableAdaptiveBinarization);
     config.saveSoundChannelFiles(soundManager.getFileNamesOrdered());
+    //config.saveStepwiseOffsets(tabla.getStepwiseOffsets());
 
 
     config.guardar();

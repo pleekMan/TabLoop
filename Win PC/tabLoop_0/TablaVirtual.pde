@@ -114,7 +114,7 @@ class TablaVirtual { //<>//
           if (kernelSize != 1) {
             noFill();
             stroke(255, 125, 0);
-            int rectOffset = floor(kernelSize * 0.5);
+            int rectOffset = floor(kernelSize * 0.5);  
             rect(pointInScreen.x - rectOffset, pointInScreen.y - rectOffset, kernelSize, kernelSize);
           }
 
@@ -200,19 +200,14 @@ class TablaVirtual { //<>//
           stepGizmoPos[step].set(stepPos.x, stepPos.y - 0.05);
           stepGizmoPos[step] = fitToBoundingBoxScreen(stepGizmoPos[step]);
         }
-
-
-        // ECUACION PARA UNA CURVA BEZIER CUADRATICA (1 PUNTO DE CONTROL + 2 VERTICES)
-        //stepPos.x = (pow(1-normalizedStepNumber, 2) * trackLeft.x) + (2*(1-normalizedStepNumber)*normalizedStepNumber*bezierMidPoint.x) + ((normalizedStepNumber*normalizedStepNumber) * trackRight.x);
-        //stepPos.y = lerp(trackLeft.y, trackRight.y, stepPos.x);
-
-
+        
+        // ASIGNACION FINAL DE POSICION DE PUNTO (NORMALIZADO)
         beatGrid[track][step] = stepPos;
       }
     }
   }
 
-  void ordenarBeatGridBkUp() {
+  void ordenarBeatGridBezierQuad() {
 
     // for each (Track for each (step))
     for (int track=0; track < beatGrid.length; track++) {
@@ -230,7 +225,7 @@ class TablaVirtual { //<>//
         stepPos.x = (pow(1-normalizedStepNumber, 2) * trackLeft.x) + (2*(1-normalizedStepNumber)*normalizedStepNumber*bezierMidPoint.x) + ((normalizedStepNumber*normalizedStepNumber) * trackRight.x);
         stepPos.y = lerp(trackLeft.y, trackRight.y, stepPos.x);
 
-
+        // ASIGNACION FINAL DE POSICION DE PUNTO (NORMALIZADO)
         beatGrid[track][step] = stepPos;
       }
     }
@@ -375,6 +370,10 @@ class TablaVirtual { //<>//
   public PVector[][] getGridPointOffsets() {
     return beatGridOffsets;
   }
+  
+  public float[] getStepwiseOffsets(){
+   return stepwiseOffset; 
+  }
 
   public void setGridPointState(int track, int step, boolean state) {
     beatGrid[track][step].z =  state ? 1 : 0;
@@ -396,6 +395,7 @@ class TablaVirtual { //<>//
     try {
       boundingBox = config.loadBoundingBox();
       cornerPoints = config.loadCornerPoints();
+      //stepwiseOffset = config.loadStepwiseOffsets();
       beatGridOffsets = config.loadPointOffset(beatGrid.length, beatGrid[0].length);
 
       bezierMidPoint.x = map(config.loadPerspectiveCorrection(), -1, 1, 0, 1);
@@ -449,7 +449,7 @@ class TablaVirtual { //<>//
     detectarTocarEsquinasGrid(mX, mY);
     detectarTocarEsquinasBox(mX, mY);
     detectarTocarStepGizmo(mX, mY);
-    //detectarTocarPoints(mX, mY);
+    detectarTocarPoints(mX, mY);
   }
 
   public void onMouseReleased(int mX, int mY) {

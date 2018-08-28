@@ -11,6 +11,8 @@
       <point id="2" x="0.7946708" y="0.8343816"/>
       <point id="3" x="0.22100313" y="0.706499"/>
     </controlCorners>
+    <stepwiseOffset>
+    </stepwiseOffset>
     <pointsOffset>
       <point id="0" x="0.0" y="0.0"/>
       <point id="1" x="0.0" y="0.0"/>
