@@ -395,7 +395,7 @@ class TablaVirtual { //<>//
     try {
       boundingBox = config.loadBoundingBox();
       cornerPoints = config.loadCornerPoints();
-      //stepwiseOffset = config.loadStepwiseOffsets();
+      stepwiseOffset = config.loadStepwiseOffsets();
       beatGridOffsets = config.loadPointOffset(beatGrid.length, beatGrid[0].length);
 
       bezierMidPoint.x = map(config.loadPerspectiveCorrection(), -1, 1, 0, 1);

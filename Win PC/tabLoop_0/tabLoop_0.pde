@@ -150,7 +150,7 @@ void guardarConfiguracionExterna() {
     config.savePointsOffset(tabla.getGridPointOffsets());
     config.saveAdaptiveBinarization(cvManager.enableAdaptiveBinarization);
     config.saveSoundChannelFiles(soundManager.getFileNamesOrdered());
-    //config.saveStepwiseOffsets(tabla.getStepwiseOffsets());
+    config.saveStepwiseOffsets(tabla.getStepwiseOffsets());
 
 
     config.guardar();
@@ -176,6 +176,10 @@ void kernelSize(float value) {
 
 void saveConfig(int value) {
   guardarConfiguracionExterna();
+}
+
+void loadConfig(int value){
+  cargarConfiguracionExterna(config);
 }
 
 void umbralCV(float value) {
@@ -228,7 +232,7 @@ void crearControles() {
     .setSize(150, 20)
     .setPosition(grillaX, 590);
 
-
+  /*
   controles.addSlider("sliderCorreccionPerspectiva")
     .setLabel("PERSPECTIVA")
     .setPosition(grillaX, 630)
@@ -238,7 +242,8 @@ void crearControles() {
     .setNumberOfTickMarks(9)
     .setSliderMode(Slider.FLEXIBLE)
     .snapToTickMarks(false);
-
+  */
+  
   int kSize = cvManager.kernelAreaSize;
   controles.addSlider("kernelSize")
     .setLabel("KERNEL DE PUNTO")

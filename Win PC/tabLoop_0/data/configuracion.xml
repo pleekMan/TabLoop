@@ -2,16 +2,32 @@
 <configuracion>
   <grid>
     <boundingBox>
-      <corner x="2" y="2"/>
-      <corner x="640" y="479"/>
+      <corner x="0" y="0"/>
+      <corner x="638" y="479"/>
     </boundingBox>
     <controlCorners>
-      <point id="0" x="0.23197491" y="0.4192872"/>
-      <point id="1" x="0.87774295" y="0.15303983"/>
-      <point id="2" x="0.7946708" y="0.8343816"/>
-      <point id="3" x="0.22100313" y="0.706499"/>
+      <point id="0" x="0.0846395" y="0.17954071"/>
+      <point id="1" x="0.9420063" y="0.08805031"/>
+      <point id="2" x="0.90909094" y="0.8385744"/>
+      <point id="3" x="0.06896552" y="0.68267226"/>
     </controlCorners>
     <stepwiseOffset>
+      <point offset="0.0"/>
+      <point offset="-0.017401718"/>
+      <point offset="-0.03552088"/>
+      <point offset="-0.050976157"/>
+      <point offset="-0.062313452"/>
+      <point offset="-0.07439451"/>
+      <point offset="-0.08521998"/>
+      <point offset="-0.09039837"/>
+      <point offset="-0.090935916"/>
+      <point offset="-0.090510786"/>
+      <point offset="-0.081792235"/>
+      <point offset="-0.07760185"/>
+      <point offset="-0.06194198"/>
+      <point offset="-0.044217467"/>
+      <point offset="-0.021172881"/>
+      <point offset="0.0"/>
     </stepwiseOffset>
     <pointsOffset>
       <point id="0" x="0.0" y="0.0"/>
@@ -184,16 +200,16 @@
   </computerVision>
   <sound>
     <channels>
-      <channel channel="0" fileName="Kick 1 YamahaEQ2.wav" volume="1.0" id="0"/>
-      <channel channel="1" fileName="Dry Ring Snare.aif" volume="1.0" id="1"/>
-      <channel channel="2" fileName="Closed Hat Paiste 1.wav" volume="1.0" id="2"/>
-      <channel channel="3" fileName="Drum Hit03.wav" volume="1.0" id="3"/>
-      <channel channel="4" fileName="Shut_Down7.wav" volume="1.0" id="4"/>
-      <channel channel="5" fileName="Kick 1 YamahaEQ2.wav" volume="1.0" id="5"/>
-      <channel channel="6" fileName="Dry Ring Snare.aif" volume="1.0" id="6"/>
-      <channel channel="7" fileName="Closed Hat Paiste 1.wav" volume="1.0" id="7"/>
-      <channel channel="8" fileName="Drum Hit03.wav" volume="1.0" id="8"/>
-      <channel channel="9" fileName="Shut_Down7.wav" volume="1.0" id="9"/>
+      <channel channel="0" fileName="Kick 1 YamahaEQ2.wav" id="0"/>
+      <channel channel="1" fileName="Dry Ring Snare.aif" id="1"/>
+      <channel channel="2" fileName="Closed Hat Paiste 1.wav" id="2"/>
+      <channel channel="3" fileName="Drum Hit03.wav" id="3"/>
+      <channel channel="4" fileName="Shut_Down7.wav" id="4"/>
+      <channel channel="5" fileName="Kick 1 YamahaEQ2.wav" id="5"/>
+      <channel channel="6" fileName="Dry Ring Snare.aif" id="6"/>
+      <channel channel="7" fileName="Closed Hat Paiste 1.wav" id="7"/>
+      <channel channel="8" fileName="Drum Hit03.wav" id="8"/>
+      <channel channel="9" fileName="Shut_Down7.wav" id="9"/>
     </channels>
   </sound>
 </configuracion>
