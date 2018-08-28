@@ -4,14 +4,18 @@ class TablaVirtual { //<>//
   PVector[] cornerPoints; // EVERYTHING NORMALIZED
   PVector[][] beatGrid; // [TRACK][STEP] NORMALIZED // Z COMPONENT IS USED TO AS BINARY ON/OFF
   PVector[][] beatGridOffsets; // FOR INDIVIDUAL POINT OFFSETTING
-  PVector bezierMidPoint = new PVector(0.5, 0.5); // 0 -> 1
+  float [] stepwiseOffset; // FOR OFFSETING BY STEP FORWARD/BACKWARDS
+  PVector[] stepGizmoPos; // GIZMO / HANDLE TO DRAG THE stepwiseOfset
+  PVector bezierMidPoint = new PVector(0.5, 0.5); // 0 -> 1, FOR QUAD BEZIER-BASED PERSPECTIVE
 
   boolean calibrationMode = true;
-  int selectedGridCorner = 0;
   int selectedBoxCorner = 0;
+  int selectedGridCorner = 0;
+  int selectedStepGizmo = 0;
   int[] selectedPoint = {-1, -1};
   boolean draggingGridCorner = false;
   boolean draggingBoxCorner = false;
+  boolean draggingSteps = false;
   boolean draggingPoints = false;
 
   int atStep;
@@ -28,6 +32,8 @@ class TablaVirtual { //<>//
     cornerPoints = new PVector[4];
     beatGrid = new PVector[tracks][steps];
     beatGridOffsets = new PVector[tracks][steps];
+    stepwiseOffset = new float[steps];
+    stepGizmoPos = new PVector[steps];
 
     boundingBox[0] = new PVector(0, 0 );
     boundingBox[1] = new PVector(640, 480);
@@ -39,11 +45,6 @@ class TablaVirtual { //<>//
     cornerPoints[2] = new PVector(0.9, 0.9);
     cornerPoints[3] = new PVector(0.1, 0.9);
 
-    //cornerPoints[0] = new PVector(0.1, 0.1);
-    //cornerPoints[1] = new PVector(0.9, 0.1);
-    //cornerPoints[2] = new PVector(0.9, 0.9);
-    //cornerPoints[3] = new PVector(0.1, 0.9);
-
 
     initPointsOffsets();
     ordenarBeatGrid();
@@ -54,20 +55,18 @@ class TablaVirtual { //<>//
 
   public void update() {
 
-    /*
-    // AVANZAR TIEMPO (HACER LA LOGICA DE BPM, BIEN)
-     if (frameCount % 10 == 0) {
-     atStep = (atStep + 1) % beatGrid[0].length; 
-     println("-|| atStep: " + atStep);
-     }
-     */
-    //text("BEAT => " + atStep, 10, 520);
-
 
     if (draggingGridCorner) {
       // CONSTRAINING mouse MOTION TO boundingBox, BEFORE CONVERTING TO BBOX NORMALIZED
       PVector screenPoint = new PVector(constrain(mouseX, boundingBox[0].x, boundingBox[1].x), constrain(mouseY, boundingBox[0].y, boundingBox[1].y));
       cornerPoints[selectedGridCorner].set(fitToBoundingBoxNormalized(screenPoint));
+      ordenarBeatGrid();
+    }
+
+    if (draggingSteps) {
+
+      float offset = fitToBoundingBoxNormalized(new PVector(mouseX, mouseY)).x - beatGrid[0][selectedStepGizmo].x;
+      stepwiseOffset[selectedStepGizmo] = offset;
       ordenarBeatGrid();
     }
 
@@ -118,6 +117,18 @@ class TablaVirtual { //<>//
             int rectOffset = floor(kernelSize * 0.5);
             rect(pointInScreen.x - rectOffset, pointInScreen.y - rectOffset, kernelSize, kernelSize);
           }
+
+          // DIBUJAR stepGizmos
+          if (track == 0) {
+            stroke(colorPalette.HIGHLIGHT_RED);
+            if (step == selectedStepGizmo) {
+              fill(colorPalette.HIGHLIGHT_RED);
+            } else {
+              noFill();
+            }
+            rect(stepGizmoPos[step].x - 5, stepGizmoPos[step].y - 5, 10, 10);
+            line(stepGizmoPos[step].x, stepGizmoPos[step].y + 5, pointInScreen.x, pointInScreen.y - 10);
+          }
         }
       }
 
@@ -152,7 +163,13 @@ class TablaVirtual { //<>//
   private void initPointsOffsets() {
     for (int track=0; track < beatGridOffsets.length; track++) {
       for (int step=0; step < beatGridOffsets[0].length; step++) {
+
+        // INDIVIDUAL POINTS OFFSET
         beatGridOffsets[track][step] = new PVector(0, 0);
+
+        // PER-STEP OFFSET
+        stepwiseOffset[step] = 0;
+        stepGizmoPos[step] = new PVector();
       }
     }
   }
@@ -162,6 +179,40 @@ class TablaVirtual { //<>//
   }
 
   void ordenarBeatGrid() {
+
+    // for each (Track for each (step))
+    for (int track=0; track < beatGrid.length; track++) {
+
+      float normalizedTrackNumber = float(track) /  (beatGrid.length - 1);
+      PVector trackLeft = PVector.lerp(cornerPoints[0], cornerPoints[3], normalizedTrackNumber);
+      PVector trackRight = PVector.lerp(cornerPoints[1], cornerPoints[2], normalizedTrackNumber);
+
+      for (int step=0; step < beatGrid[0].length; step++) {
+        float normalizedStepNumber = float(step) /  (beatGrid[0].length - 1);
+
+        float stepOffsetAdd = normalizedStepNumber + stepwiseOffset[step];
+
+        PVector stepPos = PVector.lerp(trackLeft, trackRight, stepOffsetAdd);
+
+        // ACTUALIZAR stepWise GIZMOS
+        if (track == 0) {
+          //println("-|| " + track + " : " + step);
+          stepGizmoPos[step].set(stepPos.x, stepPos.y - 0.05);
+          stepGizmoPos[step] = fitToBoundingBoxScreen(stepGizmoPos[step]);
+        }
+
+
+        // ECUACION PARA UNA CURVA BEZIER CUADRATICA (1 PUNTO DE CONTROL + 2 VERTICES)
+        //stepPos.x = (pow(1-normalizedStepNumber, 2) * trackLeft.x) + (2*(1-normalizedStepNumber)*normalizedStepNumber*bezierMidPoint.x) + ((normalizedStepNumber*normalizedStepNumber) * trackRight.x);
+        //stepPos.y = lerp(trackLeft.y, trackRight.y, stepPos.x);
+
+
+        beatGrid[track][step] = stepPos;
+      }
+    }
+  }
+
+  void ordenarBeatGridBkUp() {
 
     // for each (Track for each (step))
     for (int track=0; track < beatGrid.length; track++) {
@@ -184,6 +235,8 @@ class TablaVirtual { //<>//
       }
     }
   }
+
+
 
 
 
@@ -213,6 +266,19 @@ class TablaVirtual { //<>//
         return true;
       }
     }
+    return false;
+  }
+
+  public boolean detectarTocarStepGizmo(float x, float y) {
+
+    for (int step=0; step < beatGrid[0].length; step++) {
+      PVector gizmoPos = stepGizmoPos[step];
+      if (dist(gizmoPos.x, gizmoPos.y, x, y) < 10) {
+        selectedStepGizmo = step;
+        draggingSteps = true;
+        return true;
+      }
+    } 
     return false;
   }
 
@@ -368,10 +434,10 @@ class TablaVirtual { //<>//
     noFill();
     stroke(colorPalette.BACKGROUND_LIGHT);
     rect(posX, posY, w, h);
-    
+
     noStroke();
     fill(colorPalette.HIGHLIGHT_RED);
-    text(atStep + 1,posX + w + 5, posY + (h * 0.8));
+    text(atStep + 1, posX + w + 5, posY + (h * 0.8));
   }
 
 
@@ -382,12 +448,14 @@ class TablaVirtual { //<>//
 
     detectarTocarEsquinasGrid(mX, mY);
     detectarTocarEsquinasBox(mX, mY);
-    detectarTocarPoints(mX, mY);
+    detectarTocarStepGizmo(mX, mY);
+    //detectarTocarPoints(mX, mY);
   }
 
   public void onMouseReleased(int mX, int mY) {
     draggingGridCorner = false;
     draggingBoxCorner = false;
+    draggingSteps = false;
 
     if (draggingPoints) {
 
@@ -410,5 +478,15 @@ class TablaVirtual { //<>//
     if (draggingPoints) {
       noCursor();
     }
+  }
+
+  public void onKeyPressed(char _key) {
+    if (_key ==  'a') {
+      stepwiseOffset[0] -= 0.05;
+    }
+    if (_key ==  's') {
+      stepwiseOffset[0] += 0.05;
+    }
+    ordenarBeatGrid();
   }
 }

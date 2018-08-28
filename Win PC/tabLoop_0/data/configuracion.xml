@@ -8,7 +8,7 @@
     <controlCorners>
       <point id="0" x="0.23197491" y="0.4192872"/>
       <point id="1" x="0.87774295" y="0.15303983"/>
-      <point id="2" x="0.8683386" y="0.8951782"/>
+      <point id="2" x="0.7946708" y="0.8343816"/>
       <point id="3" x="0.22100313" y="0.706499"/>
     </controlCorners>
     <pointsOffset>
@@ -173,10 +173,10 @@
       <point id="158" x="0.0" y="0.0"/>
       <point id="159" x="0.0" y="0.0"/>
     </pointsOffset>
-    <perspectiveCorrection value="0.09473693"/>
+    <perspectiveCorrection value="0.0"/>
   </grid>
   <computerVision>
-    <kernelSize value="11"/>
+    <kernelSize value="1"/>
     <binaryThreshold value="0.35686275"/>
     <enableAdaptiveBinarization value="0"/>
   </computerVision>

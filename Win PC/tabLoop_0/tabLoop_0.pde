@@ -52,16 +52,16 @@ void draw() {
   //-------
 
   // DETECTING WHETHER A gridPoint is active on the cameraImage
-  detectGridInTable();
+  //detectGridInTable();
   // -----
 
-  cvManager.update();
-  cvManager.render();
+  //cvManager.update();
+  //cvManager.render();
 
   tabla.update();
   tabla.render();
 
-  soundManager.update();
+  //soundManager.update();
 
   //---
 
@@ -124,7 +124,7 @@ void keyPressed() {
   if (key == ' ') {
     // cvManager.adaptContrast(tabla.getGridPoints());
   }
-  //soundManager.onKeyPressed(key);
+  tabla.onKeyPressed(key);
   soundManager.onKeyPressed(key);
 }
 
