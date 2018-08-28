@@ -61,7 +61,7 @@ void draw() {
   tabla.update();
   tabla.render();
 
-  //soundManager.update();
+  soundManager.update();
 
   //---
 

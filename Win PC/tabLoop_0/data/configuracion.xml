@@ -6,10 +6,10 @@
       <corner x="638" y="479"/>
     </boundingBox>
     <controlCorners>
-      <point id="0" x="0.0846395" y="0.17954071"/>
-      <point id="1" x="0.9420063" y="0.08805031"/>
-      <point id="2" x="0.90909094" y="0.8385744"/>
-      <point id="3" x="0.06896552" y="0.68267226"/>
+      <point id="0" x="0.08934169" y="0.13778706"/>
+      <point id="1" x="0.95611286" y="0.07724426"/>
+      <point id="2" x="0.90909094" y="0.8267223"/>
+      <point id="3" x="0.06583072" y="0.64091855"/>
     </controlCorners>
     <stepwiseOffset>
       <point offset="0.0"/>
@@ -27,7 +27,7 @@
       <point offset="-0.06194198"/>
       <point offset="-0.044217467"/>
       <point offset="-0.021172881"/>
-      <point offset="0.0"/>
+      <point offset="-0.0022590756"/>
     </stepwiseOffset>
     <pointsOffset>
       <point id="0" x="0.0" y="0.0"/>
@@ -200,29 +200,16 @@
   </computerVision>
   <sound>
     <channels>
-<<<<<<< HEAD
       <channel channel="0" fileName="Kick 1 YamahaEQ2.wav" id="0"/>
       <channel channel="1" fileName="Dry Ring Snare.aif" id="1"/>
       <channel channel="2" fileName="Closed Hat Paiste 1.wav" id="2"/>
       <channel channel="3" fileName="Drum Hit03.wav" id="3"/>
       <channel channel="4" fileName="Shut_Down7.wav" id="4"/>
-      <channel channel="5" fileName="Kick 1 YamahaEQ2.wav" id="5"/>
-      <channel channel="6" fileName="Dry Ring Snare.aif" id="6"/>
-      <channel channel="7" fileName="Closed Hat Paiste 1.wav" id="7"/>
-      <channel channel="8" fileName="Drum Hit03.wav" id="8"/>
-      <channel channel="9" fileName="Shut_Down7.wav" id="9"/>
-=======
-      <channel channel="0" fileName="Kick 1 YamahaEQ2.wav" volume="1.0" id="0"/>
-      <channel channel="1" fileName="Dry Ring Snare.aif" volume="1.0" id="1"/>
-      <channel channel="2" fileName="Closed Hat Paiste 1.wav" volume="1.0" id="2"/>
-      <channel channel="3" fileName="Drum Hit03.wav" volume="1.0" id="3"/>
-      <channel channel="4" fileName="Shut_Down7.wav" volume="1.0" id="4"/>
-      <channel channel="5" fileName="sinte1_La.wav" volume="1.0" id="5"/>
-      <channel channel="6" fileName="sinte1_Sol.wav" volume="1.0" id="6"/>
-      <channel channel="7" fileName="sinte1_Mi.wav" volume="1.0" id="7"/>
-      <channel channel="8" fileName="sinte1_Re.wav" volume="1.0" id="8"/>
-      <channel channel="9" fileName="sinte1_Do.wav" volume="1.0" id="9"/>
->>>>>>> 13d4789e6378c9f42cdb177981e7227783f5c91f
+      <channel channel="5" fileName="sinte1_La.wav" id="5"/>
+      <channel channel="6" fileName="sinte1_Sol.wav" id="6"/>
+      <channel channel="7" fileName="sinte1_Mi.wav" id="7"/>
+      <channel channel="8" fileName="sinte1_Re.wav" id="8"/>
+      <channel channel="9" fileName="sinte1_Do.wav" id="9"/>
     </channels>
   </sound>
 </configuracion>
