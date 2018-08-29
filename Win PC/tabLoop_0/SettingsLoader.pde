@@ -105,6 +105,16 @@ class SettingsLoader { //<>// //<>//
     return offsets;
   }
 
+  public void saveKernelMode(boolean state) {
+    XML kernelTag = config.getChild("computerVision/kernelMode");
+    kernelTag.setContent("");
+    kernelTag.setInt("value", int(state));
+  }
+
+  public int loadKernelMode() {
+    return int(config.getChild("computerVision/kernelMode").getInt("value"));
+  }
+
   public void savePointsOffset(PVector[][] pointsOffset) {
 
     XML offsetTag = config.getChild("grid/pointsOffset");

@@ -46,7 +46,7 @@ void draw() {
   tempo.update();
   if (tempo.isOnBeat()) {
     tabla.stepTime();
-    soundManager.reportBeat(tabla.atStep); // PARA SABER CUANDO CAMBIA EL BEAT
+    soundManager.reportBeat(tabla.atStep); // PARA AVISAR CUANDO CAMBIA EL BEAT
   }
   tempo.renderTapButton();
   //-------
@@ -72,10 +72,6 @@ void draw() {
 }
 
 void detectGridInTable() {
-
-
-
-  //int atBeat = tabla.getAtBeat();
 
   // DETECTING WHETHER A gridPoint is active on the cameraImage
   PVector[][] gridPoints = tabla.getGridPoints(); // THIS GET'S THE OFFSETED COPY OF GRIDPOINTS
@@ -125,8 +121,11 @@ void keyPressed() {
     // cvManager.adaptContrast(tabla.getGridPoints());
   }
   tabla.onKeyPressed(key);
+  cvManager.onKeyPressed(key);
   soundManager.onKeyPressed(key);
 }
+
+/// CONFIGURACION EXTERNA EN XML
 
 void cargarConfiguracionExterna(SettingsLoader config) {
   if (config.isLoaded()) {
@@ -146,6 +145,7 @@ void guardarConfiguracionExterna() {
     config.saveCornerPoints(tabla.cornerPoints);
     config.savePerspectiveCorrection(map(tabla.getPerspectiveCorrection(), 0, 1, -1, 1));
     config.saveCvKernelSize(cvManager.kernelAreaSize);
+    config.saveKernelMode(cvManager.kernelModeAverage); // NOT WORKING WELL
     config.saveCvThreshold(cvManager.umbral);
     config.savePointsOffset(tabla.getGridPointOffsets());
     config.saveAdaptiveBinarization(cvManager.enableAdaptiveBinarization);
@@ -173,12 +173,18 @@ void kernelSize(float value) {
   cvManager.setKernelSize(kernelEntero);
   tabla.kernelSize = kernelEntero;
 }
+void kernelMode(boolean state){
+ // TRUE: AVERAGE, FALSE: AT LEAST 1 POINT
+ cvManager.setKernelModeAverage(state);
+ controles.getController("kernelMode").setLabel(state ? "MODO KERNEL => PROMEDIO" : "MODO KERNEL => AL MENOS 1 PIXEL");
+
+}
 
 void saveConfig(int value) {
   guardarConfiguracionExterna();
 }
 
-void loadConfig(int value){
+void loadConfig(int value) {
   cargarConfiguracionExterna(config);
 }
 
@@ -232,18 +238,25 @@ void crearControles() {
     .setSize(150, 20)
     .setPosition(grillaX, 590);
 
+
+  controles.addToggle("kernelMode")
+    .setLabel("MODO KERNEL => AL MENOS 1 PIXEL")
+    .setSize(40, 20)
+    .setPosition(grillaX, 620)
+    .setValue(false);
+
   /*
   controles.addSlider("sliderCorreccionPerspectiva")
-    .setLabel("PERSPECTIVA")
-    .setPosition(grillaX, 630)
-    .setSize(sliderWidth, sliderHeight)
-    .setRange(-1, 1)
-    .setValue(config.loadPerspectiveCorrection())
-    .setNumberOfTickMarks(9)
-    .setSliderMode(Slider.FLEXIBLE)
-    .snapToTickMarks(false);
-  */
-  
+   .setLabel("PERSPECTIVA")
+   .setPosition(grillaX, 630)
+   .setSize(sliderWidth, sliderHeight)
+   .setRange(-1, 1)
+   .setValue(config.loadPerspectiveCorrection())
+   .setNumberOfTickMarks(9)
+   .setSliderMode(Slider.FLEXIBLE)
+   .snapToTickMarks(false);
+   */
+
   int kSize = cvManager.kernelAreaSize;
   controles.addSlider("kernelSize")
     .setLabel("KERNEL DE PUNTO")
@@ -262,6 +275,7 @@ void crearControles() {
     .setSize(40, 20)
     .setPosition(camX, 583)
     .setValue(false);
+
 
 
   // SI LA CUENTA DE setValue SE HACE EN EL MOMENTO, NO SE ASIGNA. BUG? HAY Q HACERLA ANTES/AFUERA.

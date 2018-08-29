@@ -19,20 +19,14 @@ class SoundManager {
 
     sounds = new ArrayList<SoundFile>();
     soundsFileName = new ArrayList<String>();
-    //loadSounds(soundsFolder, p5);
 
     channelToSound = new int[sounds.size()];
-    // TEMPORARIO
-    /*
-    for (int i=0; i < channelToSound.length; i++) {
-     channelToSound[i] = i;
-     }
-     */
+
   }
 
   public void update() {
 
-    // PARA SOLO TRIGGEAR 1 VEZ CUANDO CAMBIA EL BEAT
+    // PARA SOLO TRIGGEREAR 1 VEZ CUANDO CAMBIA EL BEAT
     if (atBeat != previousBeat) {
       previousBeat = atBeat;
       enableTriggering = true;
@@ -167,10 +161,14 @@ class SoundManager {
   }
 
   public void onKeyPressed(char k) {
+    
+    // SWAP CHANNELS
+    /*
     if (k == 'c') {
       channelToSound[0] = 2;
       channelToSound[2] = 0;
       printChannelMappings();
     }
+    */
   }
 }

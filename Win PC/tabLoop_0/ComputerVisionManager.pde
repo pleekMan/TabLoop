@@ -13,6 +13,7 @@ class ComputerVisionManager {
   PVector imageScreenPos;
   int umbral;
   int kernelAreaSize;
+  boolean kernelModeAverage = false; // AVERAGE: RETURNS AVERAGE BRIGHTNESS IN KERNEL. !AVERAGE: RETURNS (TRUE) WHEN AT LEAST 1 BRIGHT PX IS DETECTED
 
   boolean enableAdaptiveBinarization;
   PVector contrastBoxCenter;
@@ -97,7 +98,7 @@ class ComputerVisionManager {
 
 
     // IMAGEN DE ENTRADA (escala2)
-    image(videoIn,rawImagePos.x, rawImagePos.y, videoIn.width * rawImageScale, videoIn.height * rawImageScale);
+    image(videoIn, rawImagePos.x, rawImagePos.y, videoIn.width * rawImageScale, videoIn.height * rawImageScale);
 
     // IMAGEN OPERADA (escala1)
     image(binaryImage, binaryImagePos.x, binaryImagePos.y, binaryImage.width * binaryImageScale, binaryImage.height * binaryImageScale);
@@ -161,6 +162,13 @@ class ComputerVisionManager {
         if (pixelIsInsideBounds(pixelX, pixelY)) {
           int pxSlot = pixelX + (pixelY * binaryImage.width);
           brilloAcumulativo += binaryImage.pixels[pxSlot] & 0xFF; // SOBRE EL CANAL AZUL
+
+          // KERNEL MODE TO FIND AT LEAST 1 ACTIVE PIXEL
+          if (!kernelModeAverage) {
+            if (brilloAcumulativo > 0) {
+              return 255;
+            }
+          }
         }
       }
     }
@@ -214,6 +222,11 @@ class ComputerVisionManager {
     kernelAreaSize = kernelSize;
   }
 
+  public void setKernelModeAverage(boolean state) {
+    // TRUE: AVERAGE, FALSE: AT LEAST 1 POINT
+    kernelModeAverage = state;
+  }
+
   public void setUmbral(float normValue) {
     umbral = (int)(normValue * 255);
     //println(umbral);
@@ -229,19 +242,27 @@ class ComputerVisionManager {
   private boolean pixelIsInsideBounds(int x, int y) {
     return x >= 0 && x < binaryImage.width && y >= 0 && y < binaryImage.height;
   }
-  
-  public void setImageMinimized(boolean state){
-   isCamImageMinimized = state; 
+
+  public void setImageMinimized(boolean state) {
+    isCamImageMinimized = state;
   }
 
   public void loadSettings(SettingsLoader config) {
     try {
       setUmbral(config.loadCvThreshold());
       kernelAreaSize = config.loadCvKernelSize();
+      println(config.loadKernelMode());
+      kernelModeAverage = config.loadKernelMode() > 0 ? true : false;
       enableAdaptiveBinarization = config.loadAdaptiveBinarization();
     } 
     catch (Exception error) {
       println(error);
+    }
+  }
+
+  public void onKeyPressed(char _key) {
+    if (_key == 'k') {
+      kernelModeAverage = !kernelModeAverage;
     }
   }
 }

@@ -28,6 +28,54 @@
       <point offset="-0.044217467"/>
       <point offset="-0.021172881"/>
       <point offset="-0.0022590756"/>
+      <point offset="0.0"/>
+      <point offset="-0.017401718"/>
+      <point offset="-0.03552088"/>
+      <point offset="-0.050976157"/>
+      <point offset="-0.062313452"/>
+      <point offset="-0.07439451"/>
+      <point offset="-0.08521998"/>
+      <point offset="-0.09039837"/>
+      <point offset="-0.090935916"/>
+      <point offset="-0.090510786"/>
+      <point offset="-0.081792235"/>
+      <point offset="-0.07760185"/>
+      <point offset="-0.06194198"/>
+      <point offset="-0.044217467"/>
+      <point offset="-0.021172881"/>
+      <point offset="-0.0022590756"/>
+      <point offset="0.0"/>
+      <point offset="-0.017401718"/>
+      <point offset="-0.03552088"/>
+      <point offset="-0.050976157"/>
+      <point offset="-0.062313452"/>
+      <point offset="-0.07439451"/>
+      <point offset="-0.08521998"/>
+      <point offset="-0.09039837"/>
+      <point offset="-0.090935916"/>
+      <point offset="-0.090510786"/>
+      <point offset="-0.081792235"/>
+      <point offset="-0.07760185"/>
+      <point offset="-0.06194198"/>
+      <point offset="-0.044217467"/>
+      <point offset="-0.021172881"/>
+      <point offset="-0.0022590756"/>
+      <point offset="0.0"/>
+      <point offset="-0.017401718"/>
+      <point offset="-0.03552088"/>
+      <point offset="-0.050976157"/>
+      <point offset="-0.062313452"/>
+      <point offset="-0.07439451"/>
+      <point offset="-0.08521998"/>
+      <point offset="-0.09039837"/>
+      <point offset="-0.090935916"/>
+      <point offset="-0.090510786"/>
+      <point offset="-0.081792235"/>
+      <point offset="-0.07760185"/>
+      <point offset="-0.06194198"/>
+      <point offset="-0.044217467"/>
+      <point offset="-0.021172881"/>
+      <point offset="-0.0022590756"/>
     </stepwiseOffset>
     <pointsOffset>
       <point id="0" x="0.0" y="0.0"/>
@@ -194,7 +242,8 @@
     <perspectiveCorrection value="0.0"/>
   </grid>
   <computerVision>
-    <kernelSize value="1"/>
+    <kernelSize value="17"/>
+    <kernelMode value="1"/>
     <binaryThreshold value="0.35686275"/>
     <enableAdaptiveBinarization value="0"/>
   </computerVision>
