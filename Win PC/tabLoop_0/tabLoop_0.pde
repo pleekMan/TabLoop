@@ -15,7 +15,7 @@ public ColorPalette colorPalette;
 PImage fondo;
 
 void setup() {
-  size(960, 700);
+  size(960, 700); //<>//
   cursor(HAND);
   frameRate(30);
 
@@ -128,7 +128,8 @@ void keyPressed() {
 /// CONFIGURACION EXTERNA EN XML
 
 void cargarConfiguracionExterna(SettingsLoader config) {
-  if (config.isLoaded()) {
+  if (config.isLoaded()) { //<>//
+    tempo.loadSettings(config);
     tabla.loadSettings(config);
     cvManager.loadSettings(config);
     soundManager.loadSettings(config, "samples", this);
@@ -151,6 +152,7 @@ void guardarConfiguracionExterna() {
     config.saveAdaptiveBinarization(cvManager.enableAdaptiveBinarization);
     config.saveSoundChannelFiles(soundManager.getFileNamesOrdered());
     config.saveStepwiseOffsets(tabla.getStepwiseOffsets());
+    config.saveTempo(tempo.getBPM());
 
 
     config.guardar();
@@ -211,6 +213,10 @@ void imageViewScaling(boolean state) {
    controles.getController("imageViewScaling").setPosition(width - 50, 240);
    }
    */
+}
+
+void tempo(int value){
+  tempo.setBPM(value);
 }
 
 void crearControles() {
@@ -308,20 +314,21 @@ void crearControles() {
 
   // TEMPO
   controles.addKnob("tempo")
-    .setLabel("TEMPO")
+    .setLabel("TEMPO (BPM)")
     .setPosition(900, 580)
     .setSize(35, 35)
-    .setRange(60, 200)
+    .setRange(60, 250)
     .setNumberOfTickMarks(6)
-    .snapToTickMarks(true)
-    .setValue(11);
-
+    .snapToTickMarks(false)
+    .setValue(tempo.getBPM());
+  
+  /*
   controles.addTextfield("bpmDisplay")
     .setLabel("BPM")
     .setPosition(790, 602)
     .setSize(50, 13)
     .setValue(" 60");
-
+  */
   // CONFIGURACION
 
   controles.addButton("saveConfig")

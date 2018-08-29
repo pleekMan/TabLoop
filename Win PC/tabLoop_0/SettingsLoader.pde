@@ -52,7 +52,7 @@ class SettingsLoader { //<>// //<>//
   }
 
   public float loadPerspectiveCorrection() {
-    //println(" LOADER " + config.getChild("grid/perspectiveCorrection").getFloat("value"));
+    //println(" LOADER " + config.getChild("grid/perspectiveCorrection").getFloat("vadfsgvdfglueg"));
     return config.getChild("grid/perspectiveCorrection").getFloat("value");
   }
 
@@ -137,6 +137,7 @@ class SettingsLoader { //<>// //<>//
     XML offsetTag = config.getChild("grid/stepwiseOffset");
     offsetTag.setContent("");
 
+
     for (int i=0; i < stepOffsets.length; i++) {
       XML newChild = offsetTag.addChild("point");
       newChild.setFloat("offset", stepOffsets[i]);
@@ -204,6 +205,15 @@ class SettingsLoader { //<>// //<>//
     }
     return fileName;
   }
+
+  public void saveTempo(int tempo) {
+    config.getChild("grid/tempo").setInt("value", tempo);
+  }
+  
+    public int getTempo() {
+    return config.getChild("grid/tempo").getInt("value");
+  }
+
 
   public void guardar() {
     saveXML(config, "data/configuracion.xml");

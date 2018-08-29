@@ -21,7 +21,6 @@ class SoundManager {
     soundsFileName = new ArrayList<String>();
 
     channelToSound = new int[sounds.size()];
-
   }
 
   public void update() {
@@ -40,8 +39,8 @@ class SoundManager {
     if (enableTriggering) {
       if (track < sounds.size()) { // TEMP, POR SI SE CARGARON MENOS sounds QUE tracks EXISTENTES
         //if (track == 0) { // TESTING
-          getSoundAtTrack(track).play();
-       // }
+        getSoundAtTrack(track).play();
+        // }
       }
     }
   }
@@ -123,13 +122,16 @@ class SoundManager {
   }
 
   public void loadSettings(SettingsLoader config, String soundFolder, PApplet p5) {
-    // ESTA FUNCION ES MEDIO QUILOMBO PORQUE SoundFile INICIALIZA CON un PApplet(this). ?Para Que?
-    channelToSound = config.loadSoundChannelAssignments();
+    // ESTA FUNCION ES MEDIO QUILOMBO PORQUE SoundFile INICIALIZA CON un PApplet(this).
+    int[] ca = config.loadSoundChannelAssignments();
+    if(ca.length != 0)channelToSound = ca;
+    
+    // NEED TO CODE A DEFAULT TO CATCH ERROR ON FILENAME LOADING
     String[] fNames = config.loadSoundFileNames();
 
     loadSounds(soundFolder, fNames, p5);
 
-    printChannelMappings();
+    //printChannelMappings();
 
     /*
     println("-||");
@@ -161,14 +163,14 @@ class SoundManager {
   }
 
   public void onKeyPressed(char k) {
-    
+
     // SWAP CHANNELS
     /*
     if (k == 'c') {
-      channelToSound[0] = 2;
-      channelToSound[2] = 0;
-      printChannelMappings();
-    }
-    */
+     channelToSound[0] = 2;
+     channelToSound[2] = 0;
+     printChannelMappings();
+     }
+     */
   }
 }

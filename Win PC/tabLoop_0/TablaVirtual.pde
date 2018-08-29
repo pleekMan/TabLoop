@@ -200,7 +200,7 @@ class TablaVirtual { //<>//
           stepGizmoPos[step].set(stepPos.x, stepPos.y - 0.05);
           stepGizmoPos[step] = fitToBoundingBoxScreen(stepGizmoPos[step]);
         }
-        
+
         // ASIGNACION FINAL DE POSICION DE PUNTO (NORMALIZADO)
         beatGrid[track][step] = stepPos;
       }
@@ -370,9 +370,9 @@ class TablaVirtual { //<>//
   public PVector[][] getGridPointOffsets() {
     return beatGridOffsets;
   }
-  
-  public float[] getStepwiseOffsets(){
-   return stepwiseOffset; 
+
+  public float[] getStepwiseOffsets() {
+    return stepwiseOffset;
   }
 
   public void setGridPointState(int track, int step, boolean state) {
@@ -392,24 +392,29 @@ class TablaVirtual { //<>//
   }
 
   public void loadSettings(SettingsLoader config) {
-    try {
-      boundingBox = config.loadBoundingBox();
-      cornerPoints = config.loadCornerPoints();
-      stepwiseOffset = config.loadStepwiseOffsets();
-      beatGridOffsets = config.loadPointOffset(beatGrid.length, beatGrid[0].length);
 
-      bezierMidPoint.x = map(config.loadPerspectiveCorrection(), -1, 1, 0, 1);
-    } 
-    catch (Exception error) {
-      println(error);
-    }
+    PVector[] bBox = config.loadBoundingBox();
+    if (bBox.length != 0)boundingBox = bBox;
+    
+    PVector[] cP =  config.loadCornerPoints();
+    if (cP.length != 0)cornerPoints = cP;
+    
+    float[] so = config.loadStepwiseOffsets();
+    if (so.length != 0)stepwiseOffset = so;
+    
+    PVector[][] bo = config.loadPointOffset(beatGrid.length, beatGrid[0].length);
+    if (bo.length != 0)beatGridOffsets = bo;
+
+    bezierMidPoint.x = map(config.loadPerspectiveCorrection(), -1, 1, 0, 1);
+
+
     ordenarBeatGrid();
   }
 
   public void drawMiniSequencer() {
 
     int posX = 790;
-    int posY = 580;
+    int posY = 590;
     int w = 80;
     int h = 15;
     int steps = beatGrid[0].length;
