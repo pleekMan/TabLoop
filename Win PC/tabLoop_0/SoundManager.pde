@@ -6,11 +6,12 @@ class SoundManager {
   boolean enableTriggering = false;
 
   ArrayList<SoundFile> sounds;
+  float[] volumes;
   ArrayList<String> soundsFileName;
   int[] channelToSound; // CHANNEL MAPPINGS (LINK sounds LIST TO CHANNELS)
 
 
-  public SoundManager(PApplet p5, String soundsFolder) {
+  public SoundManager() {
 
     // soundsFolder SHOULD BE RELATIVE TO data folder
 
@@ -54,6 +55,7 @@ class SoundManager {
   }
 
   //
+  /*
   private void loadSounds(String folder, PApplet p5) {
     //println(folder);
 
@@ -69,17 +71,20 @@ class SoundManager {
       soundsFileName.add(fileNames[i]);
     }
   }
+  */
 
-  private void loadSounds(String folder, String[] fileNames, PApplet p5) {
-    println(folder);
-
+  private void loadSounds(String folder, String[] fileNames, float[] _volumes, PApplet p5) {
+    //println(folder);
+    
+    volumes =_volumes;
+    
     String finalPath = dataPath("") + "/" + folder +"/";
     //String[] fileNames = listFileNames(finalPath);
 
     for (int i=0; i < fileNames.length; i++) {
-      println("-|| FilePath: " + finalPath + fileNames[i]);
+      //println("-|| FilePath: " + finalPath + fileNames[i]);
       SoundFile newSound = new SoundFile(p5, finalPath + fileNames[i]);
-      newSound.amp(0.2);
+      newSound.amp(volumes[i]);
       sounds.add(newSound);
 
       soundsFileName.add(fileNames[i]);
@@ -128,8 +133,10 @@ class SoundManager {
     
     // NEED TO CODE A DEFAULT TO CATCH ERROR ON FILENAME LOADING
     String[] fNames = config.loadSoundFileNames();
-
-    loadSounds(soundFolder, fNames, p5);
+    float[] fileVolumes = config.loadSoundVolumes();
+    printArray(fileVolumes);
+    
+    loadSounds(soundFolder, fNames, fileVolumes, p5);
 
     //printChannelMappings();
 
@@ -142,6 +149,11 @@ class SoundManager {
 
   public int[] getChannelAssignment() {
     return channelToSound;
+  }
+  
+  public float[] getChannelVolumes(){
+    return volumes;
+    
   }
 
   public String[] getFileNamesOrdered() {

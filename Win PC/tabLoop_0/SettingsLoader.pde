@@ -206,11 +206,33 @@ class SettingsLoader { //<>// //<>//
     return fileName;
   }
 
+  public void saveSoundVolumes(float[] volumes) {
+    XML soundTag = config.getChild("sound/channels");
+    soundTag.setContent("");
+
+    for (int i=0; i < volumes.length; i++) {
+      XML newChild = soundTag.getChild(i);
+      newChild.setFloat("volume", volumes[i]);
+    }
+  }
+  
+  public float[] loadSoundVolumes(){
+    XML soundTag = config.getChild("sound/channels");
+    XML[] tagChildren = soundTag.getChildren("channel");
+
+    float [] soundVolumes = new float[tagChildren.length];
+
+    for (int i=0; i < soundVolumes.length; i++) {
+      soundVolumes[i] = tagChildren[i].getFloat("volume");
+    }
+    return soundVolumes; 
+  }
+
   public void saveTempo(int tempo) {
     config.getChild("grid/tempo").setInt("value", tempo);
   }
-  
-    public int getTempo() {
+
+  public int getTempo() {
     return config.getChild("grid/tempo").getInt("value");
   }
 

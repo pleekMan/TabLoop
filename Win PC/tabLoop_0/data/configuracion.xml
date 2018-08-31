@@ -202,16 +202,16 @@
   </computerVision>
   <sound>
     <channels>
-      <channel channel="0" fileName="Kick 1 YamahaEQ2.wav" id="0"/>
-      <channel channel="1" fileName="Dry Ring Snare.aif" id="1"/>
-      <channel channel="2" fileName="Closed Hat Paiste 1.wav" id="2"/>
-      <channel channel="3" fileName="Drum Hit03.wav" id="3"/>
-      <channel channel="4" fileName="Shut_Down7.wav" id="4"/>
-      <channel channel="5" fileName="sinte1_La.wav" id="5"/>
-      <channel channel="6" fileName="sinte1_Sol.wav" id="6"/>
-      <channel channel="7" fileName="sinte1_Mi.wav" id="7"/>
-      <channel channel="8" fileName="sinte1_Re.wav" id="8"/>
-      <channel channel="9" fileName="sinte1_Do.wav" id="9"/>
+      <channel channel="0" fileName="Kick 1 YamahaEQ2.wav" volume="1.0" id="0"/>
+      <channel channel="1" fileName="Dry Ring Snare.aif" volume="1.0" id="1"/>
+      <channel channel="2" fileName="Closed Hat Paiste 1.wav" volume="1.0" id="2"/>
+      <channel channel="3" fileName="Drum Hit03.wav" volume="1.0" id="3"/>
+      <channel channel="4" fileName="Shut_Down7.wav" volume="1.0" id="4"/>
+      <channel channel="5" fileName="sinte1_La.wav" volume="1.0" id="5"/>
+      <channel channel="6" fileName="sinte1_Sol.wav" volume="1.0" id="6"/>
+      <channel channel="7" fileName="sinte1_Mi.wav" volume="1.0" id="7"/>
+      <channel channel="8" fileName="sinte1_Re.wav" volume="1.0" id="8"/>
+      <channel channel="9" fileName="sinte1_Do.wav" volume="1.0" id="9"/>
     </channels>
   </sound>
 </configuracion>

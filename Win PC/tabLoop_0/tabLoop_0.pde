@@ -27,7 +27,7 @@ void setup() {
   config = new SettingsLoader("configuracion.xml");
   tabla = new TablaVirtual();
   cvManager = new ComputerVisionManager(this);
-  soundManager = new SoundManager(this, "samples");
+  soundManager = new SoundManager();
   oscManager = new OscManager(this);
 
   tempo = new TempoManager();
@@ -160,7 +160,8 @@ void guardarConfiguracionExterna() {
     config.saveCvThreshold(cvManager.umbral);
     config.savePointsOffset(tabla.getGridPointOffsets());
     config.saveAdaptiveBinarization(cvManager.enableAdaptiveBinarization);
-    config.saveSoundChannelFiles(soundManager.getFileNamesOrdered());
+    config.saveSoundChannelFiles(soundManager.getFileNamesOrdered()); // FIRST THIS
+    config.saveSoundVolumes(soundManager.getChannelVolumes()); // SECOND THIS
     config.saveStepwiseOffsets(tabla.getStepwiseOffsets());
     config.saveTempo(tempo.getBPM());
 
