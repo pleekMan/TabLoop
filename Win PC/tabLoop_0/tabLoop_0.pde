@@ -1,5 +1,3 @@
- //<>// //<>// //<>//
-
 import controlP5.*;
 import java.util.Date;
 import java.io.File;
@@ -14,6 +12,7 @@ public SoundManager soundManager;
 public TempoManager tempo;
 public ColorPalette colorPalette;
 public OscManager oscManager;
+public ArduinoManager arduino;
 
 PImage fondo;
 
@@ -29,6 +28,7 @@ void setup() {
   cvManager = new ComputerVisionManager(this);
   soundManager = new SoundManager();
   oscManager = new OscManager(this);
+  arduino = new ArduinoManager(this);
 
   tempo = new TempoManager();
   tempo.setBPM(120);
@@ -51,6 +51,7 @@ void draw() {
   if (tempo.isOnBeat()) {
     tabla.stepTime();
     soundManager.reportBeat(tabla.atStep); // PARA AVISAR CUANDO CAMBIA EL BEAT
+    arduino.sendBeat(tabla.atStep);
   }
   tempo.renderTapButton();
   //-------
