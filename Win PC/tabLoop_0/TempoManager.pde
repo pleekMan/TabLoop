@@ -125,6 +125,7 @@ public class TempoManager {
 
   private void setBpmFromMillis(int millisecs) {
     float toBpm = (1000.0f / millisecs) * 60;
+    toBpm = constrain(toBpm, 60,250);
     setBPM((int) toBpm);
     println("-|| NEW BPM: " + toBpm);
   }
@@ -140,9 +141,16 @@ public class TempoManager {
   // TAP TEMPO
   public void tap() {
     tapped = true;
+
+    //controles.getController("bpmDisplay").setValue(bpm);
+    controles.getController("tempo").setValue((int)bpm);
   }
 
   public boolean isOverTapMarker(float x, float y) {
     return dist(x, y, beatMarkerPos.x, beatMarkerPos.y) < beatMarkerSize * 0.5;
   }
+  
+    public void loadSettings(SettingsLoader config) {
+      bpm = config.getTempo();
+    }
 }

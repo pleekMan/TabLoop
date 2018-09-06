@@ -1,4 +1,4 @@
-import controlP5.*; //<>//
+import controlP5.*;
 import java.util.Date;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -11,6 +11,8 @@ public ComputerVisionManager cvManager;
 public SoundManager soundManager;
 public TempoManager tempo;
 public ColorPalette colorPalette;
+public OscManager oscManager;
+public ArduinoManager arduino;
 
 PImage fondo;
 
@@ -24,7 +26,9 @@ void setup() {
   config = new SettingsLoader("configuracion.xml");
   tabla = new TablaVirtual();
   cvManager = new ComputerVisionManager(this);
-  soundManager = new SoundManager(this, "samples");
+  soundManager = new SoundManager();
+  oscManager = new OscManager(this);
+  arduino = new ArduinoManager(this);
 
   tempo = new TempoManager();
   tempo.setBPM(120);
@@ -47,6 +51,7 @@ void draw() {
   if (tempo.isOnBeat()) {
     tabla.stepTime();
     soundManager.reportBeat(tabla.atStep); // PARA AVISAR CUANDO CAMBIA EL BEAT
+    arduino.sendBeat(tabla.atStep);
   }
   tempo.renderTapButton();
   //-------
@@ -89,6 +94,7 @@ void detectGridInTable() {
       // TRIGGER TRACK AUDIO
       if ((beat == tabla.atStep) && isOn) {
         soundManager.triggerSound(track);
+        //oscManager.sendTrack(track);
       }
     }
   }
@@ -117,18 +123,24 @@ void keyPressed() {
   }
   if (keyCode == UP) {
   }
-  if (key == ' ') {
-    // cvManager.adaptContrast(tabla.getGridPoints());
+  if (key == '1') {
+    //println("-|| OSC : Sending Track 1");
+    //oscManager.sendTrack(1);
+  }
+  if (key == '2') {
+    //println("-|| OSC : Sending Track 2");
+    //oscManager.sendTrack(2);
   }
   tabla.onKeyPressed(key);
   cvManager.onKeyPressed(key);
   soundManager.onKeyPressed(key);
 }
 
-/// CONFIGURACION EXTERNA EN XML
+/// ------- CONFIGURACION EXTERNA EN XML
 
 void cargarConfiguracionExterna(SettingsLoader config) {
   if (config.isLoaded()) {
+    tempo.loadSettings(config);
     tabla.loadSettings(config);
     cvManager.loadSettings(config);
     soundManager.loadSettings(config, "samples", this);
@@ -149,8 +161,10 @@ void guardarConfiguracionExterna() {
     config.saveCvThreshold(cvManager.umbral);
     config.savePointsOffset(tabla.getGridPointOffsets());
     config.saveAdaptiveBinarization(cvManager.enableAdaptiveBinarization);
-    config.saveSoundChannelFiles(soundManager.getFileNamesOrdered());
+    config.saveSoundChannelFiles(soundManager.getFileNamesOrdered()); // FIRST THIS
+    config.saveSoundVolumes(soundManager.getChannelVolumes()); // SECOND THIS
     config.saveStepwiseOffsets(tabla.getStepwiseOffsets());
+    config.saveTempo(tempo.getBPM());
 
 
     config.guardar();
@@ -173,11 +187,10 @@ void kernelSize(float value) {
   cvManager.setKernelSize(kernelEntero);
   tabla.kernelSize = kernelEntero;
 }
-void kernelMode(boolean state){
- // TRUE: AVERAGE, FALSE: AT LEAST 1 POINT
- cvManager.setKernelModeAverage(state);
- controles.getController("kernelMode").setLabel(state ? "MODO KERNEL => PROMEDIO" : "MODO KERNEL => AL MENOS 1 PIXEL");
-
+void kernelMode(boolean state) {
+  // TRUE: AVERAGE, FALSE: AT LEAST 1 POINT
+  cvManager.setKernelModeAverage(state);
+  controles.getController("kernelMode").setLabel(state ? "MODO KERNEL => PROMEDIO" : "MODO KERNEL => AL MENOS 1 PIXEL");
 }
 
 void saveConfig(int value) {
@@ -211,6 +224,20 @@ void imageViewScaling(boolean state) {
    controles.getController("imageViewScaling").setPosition(width - 50, 240);
    }
    */
+}
+
+void tempo(int value) {
+  tempo.setBPM(value);
+}
+
+void playPauseButton(boolean state) {
+  if (state) {
+    tabla.play();
+    controles.getController("playPauseButton").setLabel("PAUSAR");
+  } else {
+    tabla.pause();
+    controles.getController("playPauseButton").setLabel("PLAY");
+  }
 }
 
 void crearControles() {
@@ -308,19 +335,20 @@ void crearControles() {
 
   // TEMPO
   controles.addKnob("tempo")
-    .setLabel("TEMPO")
+    .setLabel("TEMPO (BPM)")
     .setPosition(900, 580)
     .setSize(35, 35)
-    .setRange(60, 200)
+    .setRange(60, 250)
     .setNumberOfTickMarks(6)
-    .snapToTickMarks(true)
-    .setValue(11);
+    .snapToTickMarks(false)
+    .setValue(tempo.getBPM());
 
-  controles.addTextfield("bpmDisplay")
-    .setLabel("BPM")
+  controles.addToggle("playPauseButton")
+    .setLabel("PAUSAR")
+    .setSize(50, 15)
     .setPosition(790, 602)
-    .setSize(50, 13)
-    .setValue(" 60");
+    .setState(true);
+
 
   // CONFIGURACION
 
@@ -340,4 +368,14 @@ public void drawMouseCoordinates() {
   fill(150);
   text("FR: " + (int)frameRate, width - 70, height - 20);
   text("X: " + mouseX + " / Y: " + mouseY, mouseX, mouseY);
+}
+
+/// ----- OSC STUFF
+// THIS WORKS IF OUT AND IN PORTS ARE THE SAME (DEBUGGING ON SAME COMPUTER)
+void oscEvent(OscMessage theOscMessage) {
+  /* print the address pattern and the typetag of the received OscMessage */
+  print("### received an osc message.");
+  print(" addrpattern: "+theOscMessage.addrPattern());
+  println(" typetag: "+theOscMessage.typetag());
+  println(" || VALUE: "+ theOscMessage.get(0).intValue());
 }

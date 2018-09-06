@@ -2,7 +2,7 @@ class TablaVirtual { //<>//
 
   PVector [] boundingBox; // topLeft y bottomRight points, in screenSpace. Should fit the camera image.
   PVector[] cornerPoints; // EVERYTHING NORMALIZED
-  PVector[][] beatGrid; // [TRACK][STEP] NORMALIZED // Z COMPONENT IS USED TO AS BINARY ON/OFF
+  PVector[][] beatGrid; // [TRACK][STEP] NORMALIZED // Z COMPONENT IS USED AS BINARY ON/OFF
   PVector[][] beatGridOffsets; // FOR INDIVIDUAL POINT OFFSETTING
   float [] stepwiseOffset; // FOR OFFSETING BY STEP FORWARD/BACKWARDS
   PVector[] stepGizmoPos; // GIZMO / HANDLE TO DRAG THE stepwiseOfset
@@ -21,7 +21,9 @@ class TablaVirtual { //<>//
   int atStep;
   int bpm;
 
-  int kernelSize = 9; // ONLY FOR VISUALIZATION PURPOSES (mmhh not really..!)
+  int kernelSize = 9;
+
+  boolean isPlaying = true;
 
   public TablaVirtual() {
 
@@ -156,8 +158,10 @@ class TablaVirtual { //<>//
   }
 
   public void stepTime() {
-    atStep = (atStep + 1) % beatGrid[0].length; 
-    //println("-|| atStep: " + atStep);
+    if (isPlaying) {
+      atStep = (atStep + 1) % beatGrid[0].length; 
+      //println("-|| atStep: " + atStep);
+    }
   }
 
   private void initPointsOffsets() {
@@ -176,6 +180,14 @@ class TablaVirtual { //<>//
 
   public int getAtBeat() {
     return atStep;
+  }
+
+  public void play() {
+    isPlaying = true;
+  }
+
+  public void pause() {
+    isPlaying = false;
   }
 
   void ordenarBeatGrid() {
@@ -200,7 +212,7 @@ class TablaVirtual { //<>//
           stepGizmoPos[step].set(stepPos.x, stepPos.y - 0.05);
           stepGizmoPos[step] = fitToBoundingBoxScreen(stepGizmoPos[step]);
         }
-        
+
         // ASIGNACION FINAL DE POSICION DE PUNTO (NORMALIZADO)
         beatGrid[track][step] = stepPos;
       }
@@ -370,9 +382,9 @@ class TablaVirtual { //<>//
   public PVector[][] getGridPointOffsets() {
     return beatGridOffsets;
   }
-  
-  public float[] getStepwiseOffsets(){
-   return stepwiseOffset; 
+
+  public float[] getStepwiseOffsets() {
+    return stepwiseOffset;
   }
 
   public void setGridPointState(int track, int step, boolean state) {
@@ -392,17 +404,22 @@ class TablaVirtual { //<>//
   }
 
   public void loadSettings(SettingsLoader config) {
-    try {
-      boundingBox = config.loadBoundingBox();
-      cornerPoints = config.loadCornerPoints();
-      stepwiseOffset = config.loadStepwiseOffsets();
-      beatGridOffsets = config.loadPointOffset(beatGrid.length, beatGrid[0].length);
 
-      bezierMidPoint.x = map(config.loadPerspectiveCorrection(), -1, 1, 0, 1);
-    } 
-    catch (Exception error) {
-      println(error);
-    }
+    PVector[] bBox = config.loadBoundingBox();
+    if (bBox.length != 0)boundingBox = bBox;
+
+    PVector[] cP =  config.loadCornerPoints();
+    if (cP.length != 0)cornerPoints = cP;
+
+    float[] so = config.loadStepwiseOffsets();
+    if (so.length != 0)stepwiseOffset = so;
+
+    PVector[][] bo = config.loadPointOffset(beatGrid.length, beatGrid[0].length);
+    if (bo.length != 0)beatGridOffsets = bo;
+
+    bezierMidPoint.x = map(config.loadPerspectiveCorrection(), -1, 1, 0, 1);
+
+
     ordenarBeatGrid();
   }
 

@@ -6,11 +6,12 @@ class SoundManager {
   boolean enableTriggering = false;
 
   ArrayList<SoundFile> sounds;
+  float[] volumes;
   ArrayList<String> soundsFileName;
   int[] channelToSound; // CHANNEL MAPPINGS (LINK sounds LIST TO CHANNELS)
 
 
-  public SoundManager(PApplet p5, String soundsFolder) {
+  public SoundManager() {
 
     // soundsFolder SHOULD BE RELATIVE TO data folder
 
@@ -21,7 +22,6 @@ class SoundManager {
     soundsFileName = new ArrayList<String>();
 
     channelToSound = new int[sounds.size()];
-
   }
 
   public void update() {
@@ -40,8 +40,8 @@ class SoundManager {
     if (enableTriggering) {
       if (track < sounds.size()) { // TEMP, POR SI SE CARGARON MENOS sounds QUE tracks EXISTENTES
         //if (track == 0) { // TESTING
-          getSoundAtTrack(track).play();
-       // }
+        getSoundAtTrack(track).play();
+        // }
       }
     }
   }
@@ -55,6 +55,7 @@ class SoundManager {
   }
 
   //
+  /*
   private void loadSounds(String folder, PApplet p5) {
     //println(folder);
 
@@ -70,17 +71,20 @@ class SoundManager {
       soundsFileName.add(fileNames[i]);
     }
   }
+  */
 
-  private void loadSounds(String folder, String[] fileNames, PApplet p5) {
-    println(folder);
-
+  private void loadSounds(String folder, String[] fileNames, float[] _volumes, PApplet p5) {
+    //println(folder);
+    
+    volumes =_volumes;
+    
     String finalPath = dataPath("") + "/" + folder +"/";
     //String[] fileNames = listFileNames(finalPath);
 
     for (int i=0; i < fileNames.length; i++) {
-      println("-|| FilePath: " + finalPath + fileNames[i]);
+      //println("-|| FilePath: " + finalPath + fileNames[i]);
       SoundFile newSound = new SoundFile(p5, finalPath + fileNames[i]);
-      newSound.amp(0.2);
+      newSound.amp(volumes[i]);
       sounds.add(newSound);
 
       soundsFileName.add(fileNames[i]);
@@ -123,13 +127,18 @@ class SoundManager {
   }
 
   public void loadSettings(SettingsLoader config, String soundFolder, PApplet p5) {
-    // ESTA FUNCION ES MEDIO QUILOMBO PORQUE SoundFile INICIALIZA CON un PApplet(this). ?Para Que?
-    channelToSound = config.loadSoundChannelAssignments();
+    // ESTA FUNCION ES MEDIO QUILOMBO PORQUE SoundFile INICIALIZA CON un PApplet(this).
+    int[] ca = config.loadSoundChannelAssignments();
+    if(ca.length != 0)channelToSound = ca;
+    
+    // NEED TO CODE A DEFAULT TO CATCH ERROR ON FILENAME LOADING
     String[] fNames = config.loadSoundFileNames();
+    float[] fileVolumes = config.loadSoundVolumes();
+    printArray(fileVolumes);
+    
+    loadSounds(soundFolder, fNames, fileVolumes, p5);
 
-    loadSounds(soundFolder, fNames, p5);
-
-    printChannelMappings();
+    //printChannelMappings();
 
     /*
     println("-||");
@@ -140,6 +149,11 @@ class SoundManager {
 
   public int[] getChannelAssignment() {
     return channelToSound;
+  }
+  
+  public float[] getChannelVolumes(){
+    return volumes;
+    
   }
 
   public String[] getFileNamesOrdered() {
@@ -161,14 +175,14 @@ class SoundManager {
   }
 
   public void onKeyPressed(char k) {
-    
+
     // SWAP CHANNELS
     /*
     if (k == 'c') {
-      channelToSound[0] = 2;
-      channelToSound[2] = 0;
-      printChannelMappings();
-    }
-    */
+     channelToSound[0] = 2;
+     channelToSound[2] = 0;
+     printChannelMappings();
+     }
+     */
   }
 }
