@@ -1,28 +1,24 @@
-import ddf.minim.*;
+import processing.sound.*;
 
-class SoundManager {
-
-  Minim minim;
+class SoundManager_SoundLib {
 
   int atBeat, previousBeat;
   boolean enableTriggering = false;
 
-  ArrayList<AudioSample> sounds;
+  ArrayList<SoundFile> sounds;
   float[] volumes;
   ArrayList<String> soundsFileName;
   int[] channelToSound; // CHANNEL MAPPINGS (LINK sounds LIST TO CHANNELS)
 
 
-  public SoundManager(PApplet p5) {
+  public SoundManager() {
 
     // soundsFolder SHOULD BE RELATIVE TO data folder
-    minim = new Minim(p5);
 
     atBeat = 1;
     previousBeat = 0;
 
-    sounds = new ArrayList<AudioSample>();
-    
+    sounds = new ArrayList<SoundFile>();
     soundsFileName = new ArrayList<String>();
 
     channelToSound = new int[sounds.size()];
@@ -45,14 +41,14 @@ class SoundManager {
       if (track < sounds.size()) { // TEMP, POR SI SE CARGARON MENOS sounds QUE tracks EXISTENTES
         //if (track == 0) { // TESTING
         //getSoundAtTrack(track).pause();
-        //getSoundAtTrack(track).jump(0);
-        getSoundAtTrack(track).trigger();
+        getSoundAtTrack(track).jump(0);
+        getSoundAtTrack(track).play();
         //}
       }
     }
   }
 
-  private AudioSample getSoundAtTrack(int track) {
+  private SoundFile getSoundAtTrack(int track) {
     return sounds.get(channelToSound[track]);
   }
 
@@ -84,13 +80,13 @@ class SoundManager {
 
     volumes =_volumes;
 
-    String finalPath = dataPath("") + "\\" + folder +"\\";
+    String finalPath = dataPath("") + "/" + folder +"/";
     //String[] fileNames = listFileNames(finalPath);
 
     for (int i=0; i < fileNames.length; i++) {
-      println("-|| FilePath: " + finalPath + fileNames[i]);
-      AudioSample newSound = minim.loadSample(finalPath + fileNames[i]);
-      newSound.setVolume(volumes[i]);
+      //println("-|| FilePath: " + finalPath + fileNames[i]);
+      SoundFile newSound = new SoundFile(p5, finalPath + fileNames[i]);
+      newSound.amp(volumes[i]);
       sounds.add(newSound);
 
       soundsFileName.add(fileNames[i]);

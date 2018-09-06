@@ -26,8 +26,8 @@ void setup() {
   config = new SettingsLoader("configuracion.xml");
   tabla = new TablaVirtual();
   cvManager = new ComputerVisionManager(this);
-  soundManager = new SoundManager();
-  oscManager = new OscManager(this);
+  soundManager = new SoundManager(this);
+  //oscManager = new OscManager(this);
   arduino = new ArduinoManager(this);
 
   tempo = new TempoManager();
@@ -126,10 +126,12 @@ void keyPressed() {
   if (key == '1') {
     //println("-|| OSC : Sending Track 1");
     //oscManager.sendTrack(1);
+    arduino.sendBeat(0);
   }
   if (key == '2') {
     //println("-|| OSC : Sending Track 2");
     //oscManager.sendTrack(2);
+    arduino.sendBeat(1);
   }
   tabla.onKeyPressed(key);
   cvManager.onKeyPressed(key);

@@ -26,7 +26,8 @@ class ComputerVisionManager {
   public ComputerVisionManager(PApplet _p5) {
     p5 = _p5;
 
-    videoIn = new Capture(p5, 1280, 960); // RESOLUCION NATIVA DE Logitech C270
+    //videoIn = new Capture(p5, 1280, 960); // RESOLUCION NATIVA DE Logitech C270
+    videoIn = new Capture(p5,640, 480);
     videoIn.start();
 
     opencv = new OpenCV(p5, videoIn);

@@ -6,16 +6,17 @@ class ArduinoManager {
   Serial port;
 
   ArduinoManager(PApplet p5) {
-    
-    println("-|| Serial available: ");
+
+    println("-|| Serial COMs available: ");
     printArray(Serial.list());
 
-    String portName = Serial.list()[1];
+    String portName = Serial.list()[0];
     port = new Serial(p5, portName, 9600);
   }
 
   void sendBeat(int beat) {
-    port.write(beat);
+    //port.write(beat);
+    port.write(int(beat % 7)); // TEST CON MENOS LEDS
+    println("-|| Sending beat: " + beat);
   }
-
 }
