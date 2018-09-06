@@ -17,6 +17,13 @@ class ArduinoManager {
   void sendBeat(int beat) {
     //port.write(beat);
     port.write(int(beat % 7)); // TEST CON MENOS LEDS
-    println("-|| Sending beat: " + beat);
+    println("-|| Sending beat:");
+    println("|-> " + beat);
+  }
+  void update() {
+    if ( port.available() > 0) {
+      int inValue = port.read();
+      println("->| " + inValue);
+    }
   }
 }

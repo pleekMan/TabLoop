@@ -157,11 +157,12 @@ class TablaVirtual { //<>//
     }
   }
 
-  public void stepTime() {
+  public int stepTime() {
     if (isPlaying) {
       atStep = (atStep + 1) % beatGrid[0].length; 
       //println("-|| atStep: " + atStep);
     }
+    return atStep;
   }
 
   private void initPointsOffsets() {

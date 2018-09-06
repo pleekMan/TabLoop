@@ -2,6 +2,8 @@ import controlP5.*;
 import java.util.Date;
 import java.io.File;
 import java.io.FilenameFilter;
+import processing.serial.*;
+
 
 ControlP5 controles;
 
@@ -11,8 +13,10 @@ public ComputerVisionManager cvManager;
 public SoundManager soundManager;
 public TempoManager tempo;
 public ColorPalette colorPalette;
-public OscManager oscManager;
-public ArduinoManager arduino;
+//public OscManager oscManager;
+//public ArduinoManager arduino;
+
+Serial port;
 
 PImage fondo;
 
@@ -28,7 +32,7 @@ void setup() {
   cvManager = new ComputerVisionManager(this);
   soundManager = new SoundManager(this);
   //oscManager = new OscManager(this);
-  arduino = new ArduinoManager(this);
+  //arduino = new ArduinoManager(this);
 
   tempo = new TempoManager();
   tempo.setBPM(120);
@@ -39,6 +43,12 @@ void setup() {
   controles = new ControlP5(this);
   crearControles();
 
+  println("-|| Serial COMs available: ");
+  printArray(Serial.list());
+  String portName = Serial.list()[0];
+  port = new Serial(this, portName, 9600);
+  port.clear();
+
   fondo = loadImage("tabLoop_back.png");
 }
 
@@ -46,15 +56,35 @@ void setup() {
 void draw() {
   background(fondo);
 
+  if (tempo.isOnBeat()) {
+    //byte[] toSend = {(byte)tabla.atStep};
+    port.write((byte)tabla.atStep);
+    
+    //println("|-> " + char(tabla.atStep + 48));
+    port.clear();
+  }
+
+  if ( port.available() > 0) {
+    int inValue = port.read();
+    println("->| " + inValue);
+  }
+
+
   // TEMPO STUFF
   tempo.update();
   if (tempo.isOnBeat()) {
-    tabla.stepTime();
-    soundManager.reportBeat(tabla.atStep); // PARA AVISAR CUANDO CAMBIA EL BEAT
-    arduino.sendBeat(tabla.atStep);
+    int atStep = tabla.stepTime();
+    soundManager.reportBeat(atStep); // PARA AVISAR CUANDO CAMBIA EL BEAT
+    //arduino.sendBeat(tabla.atStep);
+    //port.write(atStep);
+    //println("|-> " + tabla.atStep);
   }
   tempo.renderTapButton();
+
+
   //-------
+
+  //arduino.update();
 
   // DETECTING WHETHER A gridPoint is active on the cameraImage
   detectGridInTable();
@@ -93,7 +123,7 @@ void detectGridInTable() {
 
       // TRIGGER TRACK AUDIO
       if ((beat == tabla.atStep) && isOn) {
-        soundManager.triggerSound(track);
+        //soundManager.triggerSound(track);
         //oscManager.sendTrack(track);
       }
     }
@@ -126,13 +156,20 @@ void keyPressed() {
   if (key == '1') {
     //println("-|| OSC : Sending Track 1");
     //oscManager.sendTrack(1);
-    arduino.sendBeat(0);
+    //arduino.sendBeat(0);
+    port.write(0);
   }
   if (key == '2') {
     //println("-|| OSC : Sending Track 2");
     //oscManager.sendTrack(2);
-    arduino.sendBeat(1);
+    //arduino.sendBeat(1);
+    port.write(1);
   }
+  if (key == '3') {
+    port.write(2);
+  }
+
+
   tabla.onKeyPressed(key);
   cvManager.onKeyPressed(key);
   soundManager.onKeyPressed(key);
