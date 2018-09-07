@@ -13,7 +13,7 @@ public ComputerVisionManager cvManager;
 public SoundManager soundManager;
 public TempoManager tempo;
 public ColorPalette colorPalette;
-//public OscManager oscManager;
+public OscManager oscManager;
 //public ArduinoManager arduino;
 
 Serial port;
@@ -31,7 +31,7 @@ void setup() {
   tabla = new TablaVirtual();
   cvManager = new ComputerVisionManager(this);
   soundManager = new SoundManager(this);
-  //oscManager = new OscManager(this);
+  oscManager = new OscManager(this);
   //arduino = new ArduinoManager(this);
 
   tempo = new TempoManager();
@@ -42,13 +42,14 @@ void setup() {
 
   controles = new ControlP5(this);
   crearControles();
-
+  
+  /*
   println("-|| Serial COMs available: ");
   printArray(Serial.list());
   String portName = Serial.list()[0];
   port = new Serial(this, portName, 9600);
   port.clear();
-
+  */
   fondo = loadImage("tabLoop_back.png");
 }
 
@@ -58,16 +59,17 @@ void draw() {
 
   if (tempo.isOnBeat()) {
     //byte[] toSend = {(byte)tabla.atStep};
-    port.write((byte)tabla.atStep);
+    //port.write((byte)tabla.atStep);
     
     //println("|-> " + char(tabla.atStep + 48));
-    port.clear();
+    //port.clear();
   }
-
+  /*
   if ( port.available() > 0) {
     int inValue = port.read();
     println("->| " + inValue);
   }
+  */
 
 
   // TEMPO STUFF
@@ -75,6 +77,7 @@ void draw() {
   if (tempo.isOnBeat()) {
     int atStep = tabla.stepTime();
     soundManager.reportBeat(atStep); // PARA AVISAR CUANDO CAMBIA EL BEAT
+    oscManager.reportBeat(atStep);
     //arduino.sendBeat(tabla.atStep);
     //port.write(atStep);
     //println("|-> " + tabla.atStep);
@@ -97,6 +100,8 @@ void draw() {
   tabla.render();
 
   soundManager.update();
+  
+  oscManager.update();
 
   //---
 
@@ -124,7 +129,8 @@ void detectGridInTable() {
       // TRIGGER TRACK AUDIO
       if ((beat == tabla.atStep) && isOn) {
         //soundManager.triggerSound(track);
-        //oscManager.sendTrack(track);
+        
+        oscManager.sendTrack(track);
       }
     }
   }
@@ -409,12 +415,13 @@ public void drawMouseCoordinates() {
   text("X: " + mouseX + " / Y: " + mouseY, mouseX, mouseY);
 }
 
-/// ----- OSC STUFF
+/// ----- OSC STUFF\
+/*
 // THIS WORKS IF OUT AND IN PORTS ARE THE SAME (DEBUGGING ON SAME COMPUTER)
 void oscEvent(OscMessage theOscMessage) {
-  /* print the address pattern and the typetag of the received OscMessage */
   print("### received an osc message.");
   print(" addrpattern: "+theOscMessage.addrPattern());
   println(" typetag: "+theOscMessage.typetag());
   println(" || VALUE: "+ theOscMessage.get(0).intValue());
 }
+*/
