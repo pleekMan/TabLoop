@@ -10,34 +10,47 @@ class ComputerVisionManager {
   OpenCV opencv;
 
   PImage binaryImage;
+  PImage contrastBrightnessImage;
   PVector imageScreenPos;
   int umbral;
+  int brillo;
+  float contraste;
+  int dilatePasses;
+  int erodePasses;
   int kernelAreaSize;
   boolean kernelModeAverage = false; // AVERAGE: RETURNS AVERAGE BRIGHTNESS IN KERNEL. !AVERAGE: RETURNS (TRUE) WHEN AT LEAST 1 BRIGHT PX IS DETECTED
 
   boolean enableAdaptiveBinarization;
   PVector contrastBoxCenter;
   int contrastBoxSize;
-  Timer adaptiveBinarizationTimer;
+  //Timer adaptiveBinarizationTimer;
 
   boolean isCamImageMinimized = false;
 
 
   public ComputerVisionManager(PApplet _p5) {
     p5 = _p5;
-
+    
+    String[] cameras = Capture.list();
     //videoIn = new Capture(p5, 1280, 960); // RESOLUCION NATIVA DE Logitech C270
-    videoIn = new Capture(p5,640, 480);
+    // videoIn = new Capture(p5, 640, 480); // DEFAULT CAMERA
+    videoIn = new Capture(p5, 1280, 960, cameras[61]); // WORKING WEB-CAM ON LAPTOP
+
     videoIn.start();
 
     opencv = new OpenCV(p5, videoIn);
 
 
-    binaryImage = loadImage("camView.png");
+    //binaryImage = loadImage("camView.png");
+    binaryImage = createImage(videoIn.width, videoIn.height, RGB);
+    contrastBrightnessImage = createImage(videoIn.width, videoIn.height, RGB);
+
     imageScreenPos = new PVector(0, 0);
     umbral = 127;
-    println("-|| UMBRAL: " + umbral);
-
+    brillo = 0; // -255 -> 255
+    contraste = 0.5; // 0.0 -> 1.0
+    dilatePasses = 0; // 0 -> 5 INT
+    erodePasses = 0; // 0 -> 5 INT
 
     kernelAreaSize = 9; // IMPARES, ASI EXISTE UN PIXEL CENTRAL
 
@@ -46,32 +59,49 @@ class ComputerVisionManager {
     contrastBoxSize = int(videoIn.width * 0.25);
 
 
-    adaptiveBinarizationTimer = new Timer();
-    adaptiveBinarizationTimer.setDurationInSeconds(10);
-    if (enableAdaptiveBinarization)adaptiveBinarizationTimer.start();
+    //adaptiveBinarizationTimer = new Timer();
+    //adaptiveBinarizationTimer.setDurationInSeconds(10);
+    //if (enableAdaptiveBinarization)adaptiveBinarizationTimer.start();
   }
   public void update() {
 
     //-- CADA TANTO, EJECUTAR PROCESO DE CONTRASTE ADAPTATIVO
+    /*
     if (enableAdaptiveBinarization) {
-      if (adaptiveBinarizationTimer.isFinished()) {
-        adaptContrast(tabla.getGridPoints()); // ESTO SE PUEDE LLAMAR ASI SOLO PORQ ESTAMOS EN PROCESSING IDE
-        adaptiveBinarizationTimer.start();
-        controles.getController("umbralCV").setValue(cvManager.umbral / 255.0);  // ESTO SE PUEDE LLAMAR ASI SOLO PORQ ESTAMOS EN PROCESSING IDE
-      }
-    }
+     if (adaptiveBinarizationTimer.isFinished()) {
+     adaptContrast(tabla.getGridPoints()); // ESTO SE PUEDE LLAMAR ASI, SOLO PORQ ESTAMOS EN PROCESSING IDE
+     adaptiveBinarizationTimer.start();
+     controles.getController("umbralCV").setValue(cvManager.umbral / 255.0);  // ESTO SE PUEDE LLAMAR ASI SOLO PORQ ESTAMOS EN PROCESSING IDE
+     }
+     }
+     */
     //----
 
+    // OPENCV MANIPULATION --- 
     if (videoIn.available()) {
       videoIn.read();
       opencv.loadImage(videoIn);
     }
 
     opencv.gray();
+
+    opencv.brightness(brillo);
+    opencv.contrast(contraste);
+    contrastBrightnessImage = opencv.getOutput().copy();
+
     opencv.threshold(umbral);
     opencv.invert();
 
+    for (int i=0; i < dilatePasses; i++) {
+      opencv.dilate();
+    }
+    for (int i=0; i < erodePasses; i++) {
+      opencv.erode();
+    }
+
     binaryImage = opencv.getOutput();
+
+    // END OPENCV MANIPULATION ---
   }
 
 
@@ -103,6 +133,10 @@ class ComputerVisionManager {
 
     // IMAGEN OPERADA (escala1)
     image(binaryImage, binaryImagePos.x, binaryImagePos.y, binaryImage.width * binaryImageScale, binaryImage.height * binaryImageScale);
+
+    // BRILLO / CONTRASTE
+    image(contrastBrightnessImage, rawImagePos.x, rawImagePos.y + (videoIn.height * rawImageScale), videoIn.width * rawImageScale, videoIn.height * rawImageScale);
+
 
     // DIBUJAR CONTORNO DE LA IMAGEN
     noFill();
@@ -233,11 +267,28 @@ class ComputerVisionManager {
     //println(umbral);
   }
 
-  public void enableAdaptiveBinarization(boolean state) {
-    enableAdaptiveBinarization = state;
-    if (state)adaptiveBinarizationTimer.start();
-    //println("AdaptiveBinarization = " + state);
+  public void setBrillo(float value) {
+    brillo = int(value * 255);
   }
+
+  public void setContraste(float value) {
+    contraste = value;
+  }
+
+  public void setDilatePasses(int passes) {
+    dilatePasses = passes;
+  }
+  public void setErodePasses(int passes) {
+    erodePasses = passes;
+  }
+
+  /*
+  public void enableAdaptiveBinarization(boolean state) {
+   enableAdaptiveBinarization = state;
+   if (state)adaptiveBinarizationTimer.start();
+   //println("AdaptiveBinarization = " + state);
+   }
+   */
 
 
   private boolean pixelIsInsideBounds(int x, int y) {
@@ -249,16 +300,16 @@ class ComputerVisionManager {
   }
 
   public void loadSettings(SettingsLoader config) {
-    try {
-      setUmbral(config.loadCvThreshold());
-      kernelAreaSize = config.loadCvKernelSize();
-      println(config.loadKernelMode());
-      kernelModeAverage = config.loadKernelMode() > 0 ? true : false;
-      enableAdaptiveBinarization = config.loadAdaptiveBinarization();
-    } 
-    catch (Exception error) {
-      println(error);
-    }
+
+    setUmbral(config.loadCvThreshold());
+    kernelAreaSize = config.loadCvKernelSize();
+    //println(config.loadKernelMode());
+    kernelModeAverage = config.loadKernelMode() > 0 ? true : false;
+    enableAdaptiveBinarization = config.loadAdaptiveBinarization();
+    brillo = config.loadCvBrightness();
+    contraste = config.loadCvContrast();
+    dilatePasses = config.loadCvDilate();
+    erodePasses = config.loadCvErode();
   }
 
   public void onKeyPressed(char _key) {

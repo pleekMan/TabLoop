@@ -42,14 +42,14 @@ void setup() {
 
   controles = new ControlP5(this);
   crearControles();
-  
+
   /*
   println("-|| Serial COMs available: ");
-  printArray(Serial.list());
-  String portName = Serial.list()[0];
-  port = new Serial(this, portName, 9600);
-  port.clear();
-  */
+   printArray(Serial.list());
+   String portName = Serial.list()[0];
+   port = new Serial(this, portName, 9600);
+   port.clear();
+   */
   fondo = loadImage("tabLoop_back.png");
 }
 
@@ -60,16 +60,16 @@ void draw() {
   if (tempo.isOnBeat()) {
     //byte[] toSend = {(byte)tabla.atStep};
     //port.write((byte)tabla.atStep);
-    
+
     //println("|-> " + char(tabla.atStep + 48));
     //port.clear();
   }
   /*
   if ( port.available() > 0) {
-    int inValue = port.read();
-    println("->| " + inValue);
-  }
-  */
+   int inValue = port.read();
+   println("->| " + inValue);
+   }
+   */
 
 
   // TEMPO STUFF
@@ -100,7 +100,7 @@ void draw() {
   tabla.render();
 
   soundManager.update();
-  
+
   oscManager.update();
 
   //---
@@ -129,7 +129,7 @@ void detectGridInTable() {
       // TRIGGER TRACK AUDIO
       if ((beat == tabla.atStep) && isOn) {
         //soundManager.triggerSound(track);
-        
+
         oscManager.sendTrack(track);
       }
     }
@@ -198,17 +198,26 @@ void cargarConfiguracionExterna(SettingsLoader config) {
 
 void guardarConfiguracionExterna() {
   if (config.isLoaded()) {
+    //TABLA
     config.saveBoundingBox(tabla.boundingBox);
     config.saveCornerPoints(tabla.cornerPoints);
     config.savePerspectiveCorrection(map(tabla.getPerspectiveCorrection(), 0, 1, -1, 1));
+    config.saveStepwiseOffsets(tabla.getStepwiseOffsets());
+    config.savePointsOffset(tabla.getGridPointOffsets());
+
+    // COMPUTER VISION
     config.saveCvKernelSize(cvManager.kernelAreaSize);
     config.saveKernelMode(cvManager.kernelModeAverage); // NOT WORKING WELL
     config.saveCvThreshold(cvManager.umbral);
-    config.savePointsOffset(tabla.getGridPointOffsets());
-    config.saveAdaptiveBinarization(cvManager.enableAdaptiveBinarization);
+    //config.saveAdaptiveBinarization(cvManager.enableAdaptiveBinarization);
+    config.saveCvBrightness(cvManager.brillo);
+    config.saveCvContrast(cvManager.contraste);
+    config.saveCvDilate(cvManager.dilatePasses);
+    config.saveCvErode(cvManager.erodePasses);
+
+    // SONIDO
     config.saveSoundChannelFiles(soundManager.getFileNamesOrdered()); // FIRST THIS
-    config.saveSoundVolumes(soundManager.getChannelVolumes()); // SECOND THIS
-    config.saveStepwiseOffsets(tabla.getStepwiseOffsets());
+    //config.saveSoundVolumes(soundManager.getChannelVolumes()); // SECOND THIS //<>//
     config.saveTempo(tempo.getBPM());
 
 
@@ -250,13 +259,30 @@ void umbralCV(float value) {
   cvManager.setUmbral(value);
 }
 
+void brilloCV(float value) {
+  cvManager.setBrillo(value);
+}
+
+void contrasteCV(float value) {
+  cvManager.setContraste(value);
+}
+
+void dilatarCV(float value) {
+  cvManager.setDilatePasses(int(value));
+}
+void erosionarCV(float value) {
+  cvManager.setErodePasses(int(value));
+}
+
 void resetPointOffsets(boolean state) {
   tabla.resetPointsOffset();
 }
 
+/*
 void enableAdaptiveBinarization(boolean state) {
   cvManager.enableAdaptiveBinarization(state);
 }
+*/
 
 void imageViewScaling(boolean state) {
   cvManager.setImageMinimized(state);
@@ -288,7 +314,7 @@ void playPauseButton(boolean state) {
 void crearControles() {
 
   int sliderHeight = 13;
-  int sliderWidth = 200;
+  int sliderWidth = 150;
   color sliderColorBack = colorPalette.BACKGROUND_DARK;
   color sliderColorFront = colorPalette.HIGHLIGHT_GREEN;
   color sliderColorActive = colorPalette.HIGHLIGHT_GREEN_DARK;
@@ -341,20 +367,20 @@ void crearControles() {
     .setValue(kSize);
 
   // CAMARA Y SENSADO
-
+  /*
   controles.addToggle("enableAdaptiveBinarization")
-    .setLabel("BINARIZACION ADAPTATIVA")
-    .setSize(40, 20)
-    .setPosition(camX, 583)
-    .setValue(false);
-
+   .setLabel("BINARIZACION ADAPTATIVA")
+   .setSize(40, 20)
+   .setPosition(camX, 583)
+   .setValue(false);
+   */
 
 
   // SI LA CUENTA DE setValue SE HACE EN EL MOMENTO, NO SE ASIGNA. BUG? HAY Q HACERLA ANTES/AFUERA.
   float valorUmbral = cvManager.umbral / 255.0;
   controles.addSlider("umbralCV")
     .setLabel("UMBRAL BINARIO")
-    .setPosition(camX, 630)
+    .setPosition(camX, 590)
     .setSize(sliderWidth, sliderHeight)
     .setRange(0, 1)
     .setNumberOfTickMarks(5)
@@ -362,21 +388,71 @@ void crearControles() {
     .snapToTickMarks(false)
     .setValue(valorUmbral);
 
+  /*
   controles.addSlider("adaptiveBinarizationFrequency")
-    .setLabel("FRECUENCIA (MINUTOS)")
-    .setPosition(camX, 665)
+   .setLabel("FRECUENCIA (MINUTOS)")
+   .setPosition(camX, 665)
+   .setSize(sliderWidth, sliderHeight)
+   .setRange(5, 60)
+   .setNumberOfTickMarks(5)
+   .setSliderMode(Slider.FLEXIBLE)
+   .snapToTickMarks(false)
+   .setValue(valorUmbral);
+   */
+
+  // BRILLO CV
+  float br = cvManager.brillo / 255.0;
+  controles.addSlider("brilloCV")
+    .setLabel("BRILLO")
+    .setPosition(camX, 630)
     .setSize(sliderWidth, sliderHeight)
-    .setRange(5, 60)
+    .setRange(-1, 1)
     .setNumberOfTickMarks(5)
     .setSliderMode(Slider.FLEXIBLE)
     .snapToTickMarks(false)
-    .setValue(valorUmbral);
+    .setValue(br);
+
+  // CONTRASTE CV
+  float con = cvManager.contraste;
+  controles.addSlider("contrasteCV")
+    .setLabel("CONTRASTE")
+    .setPosition(camX, 670)
+    .setSize(sliderWidth, sliderHeight)
+    .setRange(0, 1)
+    .setNumberOfTickMarks(5)
+    .setSliderMode(Slider.FLEXIBLE)
+    .snapToTickMarks(false)
+    .setValue(con);
+
+  // DILATE
+  int dil = cvManager.dilatePasses;
+  controles.addSlider("dilatarCV")
+    .setLabel("DILATAR")
+    .setPosition(580, 630)
+    .setSize(int(sliderWidth * 0.5), sliderHeight)
+    .setRange(0, 4)
+    .setNumberOfTickMarks(5)
+    .setSliderMode(Slider.FLEXIBLE)
+    .snapToTickMarks(true)
+    .setValue(dil);
+
+  // ERODE
+  int ero = cvManager.erodePasses;
+  controles.addSlider("erosionarCV")
+    .setLabel("EROSIONAR")
+    .setPosition(580, 670)
+    .setSize(int(sliderWidth * 0.5), sliderHeight)
+    .setRange(0, 4)
+    .setNumberOfTickMarks(5)
+    .setSliderMode(Slider.FLEXIBLE)
+    .snapToTickMarks(true)
+    .setValue(ero);
 
 
   controles.addToggle("imageViewScaling")
-    .setLabel("MINIMIZAR IMAGENES (PERFORMANCE)")
+    .setLabel("MINIMIZAR IMAGENES")
     .setSize(50, 20)
-    .setPosition(520, 583);
+    .setPosition(580, 583);
 
   // TEMPO
   controles.addKnob("tempo")
@@ -418,10 +494,10 @@ public void drawMouseCoordinates() {
 /// ----- OSC STUFF\
 /*
 // THIS WORKS IF OUT AND IN PORTS ARE THE SAME (DEBUGGING ON SAME COMPUTER)
-void oscEvent(OscMessage theOscMessage) {
-  print("### received an osc message.");
-  print(" addrpattern: "+theOscMessage.addrPattern());
-  println(" typetag: "+theOscMessage.typetag());
-  println(" || VALUE: "+ theOscMessage.get(0).intValue());
-}
-*/
+ void oscEvent(OscMessage theOscMessage) {
+ print("### received an osc message.");
+ print(" addrpattern: "+theOscMessage.addrPattern());
+ println(" typetag: "+theOscMessage.typetag());
+ println(" || VALUE: "+ theOscMessage.get(0).intValue());
+ }
+ */

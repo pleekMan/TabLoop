@@ -22,7 +22,7 @@ class SoundManager {
     previousBeat = 0;
 
     sounds = new ArrayList<AudioSample>();
-    
+
     soundsFileName = new ArrayList<String>();
 
     channelToSound = new int[sounds.size()];
@@ -82,7 +82,8 @@ class SoundManager {
 
     volumes =_volumes;
 
-    String finalPath = dataPath("") + "\\" + folder +"\\";
+    String finalPath = dataPath("") + "/" + folder +"/"; // MAC OS
+    //String finalPath = dataPath("") + "\\" + folder +"\\"; // WINDOWS OS
     //String[] fileNames = listFileNames(finalPath);
 
     for (int i=0; i < fileNames.length; i++) {

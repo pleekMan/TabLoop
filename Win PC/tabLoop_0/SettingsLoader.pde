@@ -68,6 +68,38 @@ class SettingsLoader { //<>// //<>//
     config.getChild("computerVision/binaryThreshold").setFloat("value", (float)value / 255);
   }
 
+  public int loadCvBrightness() {
+    return int(config.getChild("computerVision/brightness").getFloat("value") * 255);
+  }
+
+  public void saveCvBrightness(float value) {
+    config.getChild("computerVision/brightness").setFloat("value", value / 255.0);
+  }
+
+  public float loadCvContrast() {
+    return config.getChild("computerVision/contrast").getFloat("value");
+  }
+
+  public void saveCvContrast(float value) {
+    config.getChild("computerVision/contrast").setFloat("value", value);
+  }
+
+  public int loadCvDilate() {
+    return config.getChild("computerVision/dilatePasses").getInt("value");
+  }
+
+  public void saveCvDilate(int value) {
+    config.getChild("computerVision/dilatePasses").setInt("value", value);
+  }
+  
+  public int loadCvErode() {
+    return config.getChild("computerVision/erodePasses").getInt("value");
+  }
+  
+  public void saveCvErode(int value) {
+    config.getChild("computerVision/erodePasses").setInt("value", value);
+  }
+  
   public int loadCvKernelSize() {
     return int(config.getChild("computerVision/kernelSize").getInt("value"));
   }
@@ -208,15 +240,15 @@ class SettingsLoader { //<>// //<>//
 
   public void saveSoundVolumes(float[] volumes) {
     XML soundTag = config.getChild("sound/channels");
-    soundTag.setContent("");
+    //soundTag.setContent("");
 
     for (int i=0; i < volumes.length; i++) {
       XML newChild = soundTag.getChild(i);
       newChild.setFloat("volume", volumes[i]);
     }
   }
-  
-  public float[] loadSoundVolumes(){
+
+  public float[] loadSoundVolumes() {
     XML soundTag = config.getChild("sound/channels");
     XML[] tagChildren = soundTag.getChildren("channel");
 
@@ -225,7 +257,7 @@ class SettingsLoader { //<>// //<>//
     for (int i=0; i < soundVolumes.length; i++) {
       soundVolumes[i] = tagChildren[i].getFloat("volume");
     }
-    return soundVolumes; 
+    return soundVolumes;
   }
 
   public void saveTempo(int tempo) {
