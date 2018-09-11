@@ -23,17 +23,17 @@ class ComputerVisionManager {
   boolean enableAdaptiveBinarization;
   PVector contrastBoxCenter;
   int contrastBoxSize;
-  //Timer adaptiveBinarizationTimer;
+  //Timer adaptiveBinarizationTimer;  
 
   boolean isCamImageMinimized = false;
 
 
   public ComputerVisionManager(PApplet _p5) {
     p5 = _p5;
-    
+
     String[] cameras = Capture.list();
     //videoIn = new Capture(p5, 1280, 960); // RESOLUCION NATIVA DE Logitech C270
-    // videoIn = new Capture(p5, 640, 480); // DEFAULT CAMERA
+    //videoIn = new Capture(p5, 640, 480); // DEFAULT CAMERA
     videoIn = new Capture(p5, 1280, 960, cameras[61]); // WORKING WEB-CAM ON LAPTOP
 
     videoIn.start();

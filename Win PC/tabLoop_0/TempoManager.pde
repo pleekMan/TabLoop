@@ -127,7 +127,7 @@ public class TempoManager {
     float toBpm = (1000.0f / millisecs) * 60;
     toBpm = constrain(toBpm, 60,250);
     setBPM((int) toBpm);
-    println("-|| NEW BPM: " + toBpm);
+    //println("-|| NEW BPM: " + toBpm);
   }
 
   public void start() {

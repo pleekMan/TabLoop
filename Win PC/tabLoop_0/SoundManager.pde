@@ -89,7 +89,7 @@ class SoundManager {
     for (int i=0; i < fileNames.length; i++) {
       println("-|| FilePath: " + finalPath + fileNames[i]);
       AudioSample newSound = minim.loadSample(finalPath + fileNames[i]);
-      newSound.setVolume(volumes[i]);
+      newSound.setGain(volumes[i]);
       sounds.add(newSound);
 
       soundsFileName.add(fileNames[i]);

@@ -14,7 +14,7 @@ public SoundManager soundManager;
 public TempoManager tempo;
 public ColorPalette colorPalette;
 public OscManager oscManager;
-//public ArduinoManager arduino;
+public ArduinoManager arduino;
 
 Serial port;
 
@@ -32,7 +32,7 @@ void setup() {
   cvManager = new ComputerVisionManager(this);
   soundManager = new SoundManager(this);
   oscManager = new OscManager(this);
-  //arduino = new ArduinoManager(this);
+  arduino = new ArduinoManager(this);
 
   tempo = new TempoManager();
   tempo.setBPM(120);
@@ -78,7 +78,7 @@ void draw() {
     int atStep = tabla.stepTime();
     soundManager.reportBeat(atStep); // PARA AVISAR CUANDO CAMBIA EL BEAT
     oscManager.reportBeat(atStep);
-    //arduino.sendBeat(tabla.atStep);
+    arduino.sendBeat(tabla.atStep);
     //port.write(atStep);
     //println("|-> " + tabla.atStep);
   }
@@ -123,13 +123,12 @@ void detectGridInTable() {
       // IF CVMANAGER DETECTS POINT IS "ON" 
       boolean isOn = cvManager.isOn(gridPoints[track][beat].x, gridPoints[track][beat].y);
 
-      // SET THE z COMPONENT OF THE gridPoint PVector TO 1 (OR MORE THAN 0);
+      // SET THE z COMPONENT OF THE gridPoint PVector TO 1 (OR MORE THAN 0); 
       tabla.setGridPointState(track, beat, isOn);
 
       // TRIGGER TRACK AUDIO
       if ((beat == tabla.atStep) && isOn) {
         //soundManager.triggerSound(track);
-
         oscManager.sendTrack(track);
       }
     }

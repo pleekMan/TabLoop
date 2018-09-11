@@ -9,7 +9,7 @@ void setup()
   frameRate(30);
 
   printArray(Serial.list());
-  String portName = Serial.list()[1];
+  String portName = Serial.list()[9];
   myPort = new Serial(this, portName, 9600);
 
   val = 0;
@@ -18,16 +18,17 @@ void setup()
 void draw() {
 
   if (frameCount % 15 == 0) {
-    val = (val + 1) % 16;
+    val = (val + 1) % 5;
     myPort.write(val);
+
     //myPort.clear();
   }
 
   if (mousePressed) {
     myPort.write(0);
   }
-  
-  myPort.clear();
+
+  //myPort.clear();
 }
 
 
