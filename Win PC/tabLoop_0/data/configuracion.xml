@@ -6,10 +6,10 @@
       <corner x="638" y="479"/>
     </boundingBox>
     <controlCorners>
-      <point id="0" x="0.18808778" y="0.17536534"/>
-      <point id="1" x="0.9231975" y="0.19832985"/>
-      <point id="2" x="0.8573668" y="0.78914404"/>
-      <point id="3" x="0.1630094" y="0.59707725"/>
+      <point id="0" x="0.10815047" y="0.13152401"/>
+      <point id="1" x="0.830721" y="0.20041753"/>
+      <point id="2" x="0.7601881" y="0.7724426"/>
+      <point id="3" x="0.07053292" y="0.56367433"/>
     </controlCorners>
     <stepwiseOffset>
       <point offset="-0.004873976"/>
@@ -18,16 +18,16 @@
       <point offset="-0.052824855"/>
       <point offset="-0.06780061"/>
       <point offset="-0.071626216"/>
-      <point offset="-0.088861376"/>
-      <point offset="-0.09058139"/>
-      <point offset="-0.096784145"/>
-      <point offset="-0.08444539"/>
-      <point offset="-0.085829675"/>
-      <point offset="-0.0848698"/>
-      <point offset="-0.06703442"/>
-      <point offset="-0.057286322"/>
-      <point offset="-0.042075276"/>
-      <point offset="-0.021731853"/>
+      <point offset="-0.076681554"/>
+      <point offset="-0.08192927"/>
+      <point offset="-0.07773155"/>
+      <point offset="-0.07713458"/>
+      <point offset="-0.07426679"/>
+      <point offset="-0.06251055"/>
+      <point offset="-0.05719781"/>
+      <point offset="-0.03831631"/>
+      <point offset="-0.018438041"/>
+      <point offset="-0.007264912"/>
     </stepwiseOffset>
     <pointsOffset>
       <point id="0" x="0.0" y="0.0"/>
@@ -189,13 +189,13 @@
       <point id="156" x="0.0" y="0.0"/>
       <point id="157" x="0.0" y="0.0"/>
       <point id="158" x="0.0" y="0.0"/>
-      <point id="159" x="0.013284385" y="-0.0059461594"/>
+      <point id="159" x="0.0" y="0.0"/>
     </pointsOffset>
     <perspectiveCorrection value="0.5"/>
-    <tempo value="133"/>
+    <tempo value="195"/>
   </grid>
   <computerVision>
-    <kernelSize value="15"/>
+    <kernelSize value="13"/>
     <kernelMode value="0"/>
     <binaryThreshold value="0.0"/>
     <brightness value="-0.25490198"/>
@@ -206,10 +206,10 @@
   </computerVision>
   <sound>
     <channels>
-      <channel channel="0" fileName="kitAcustico1\DrumHit05.wav" id="0"/>
-      <channel channel="1" fileName="kitAcustico1\Dry Ring Snare.wav" id="1"/>
+      <channel channel="0" fileName="kitAcustico1\Kick Burst.wav" id="0"/>
+      <channel channel="1" fileName="kitElectronico\Clap.wav" id="1"/>
       <channel channel="2" fileName="kitAcustico1\ClosedHatPaiste1.wav" id="2"/>
-      <channel channel="3" fileName="kitAcustico1\DrumHit05.wav" id="3"/>
+      <channel channel="3" fileName="kitAcustico1\HiHatAbierto.wav" id="3"/>
       <channel channel="4" fileName="kitAcustico1\Cowbell1.wav" id="4"/>
       <channel channel="5" fileName="meloSint\4_sint-faSost-1.wav" id="5"/>
       <channel channel="6" fileName="meloSint\3_sint-re-1.wav" id="6"/>
