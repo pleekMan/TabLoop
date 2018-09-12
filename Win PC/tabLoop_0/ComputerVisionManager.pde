@@ -33,8 +33,8 @@ class ComputerVisionManager {
 
     String[] cameras = Capture.list();
     //videoIn = new Capture(p5, 1280, 960); // RESOLUCION NATIVA DE Logitech C270
-    //videoIn = new Capture(p5, 640, 480); // DEFAULT CAMERA
-    videoIn = new Capture(p5, 1280, 960, cameras[61]); // WORKING WEB-CAM ON LAPTOP
+    videoIn = new Capture(p5, 640, 480); // DEFAULT CAMERA
+    //videoIn = new Capture(p5, 1280, 960, cameras[61]); // WORKING WEB-CAM ON LAPTOP
 
     videoIn.start();
 

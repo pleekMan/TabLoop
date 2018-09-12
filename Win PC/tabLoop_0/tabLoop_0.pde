@@ -32,7 +32,7 @@ void setup() {
   cvManager = new ComputerVisionManager(this);
   soundManager = new SoundManager(this);
   oscManager = new OscManager(this);
-  arduino = new ArduinoManager(this);
+  //arduino = new ArduinoManager(this);
 
   tempo = new TempoManager();
   tempo.setBPM(120);
@@ -56,7 +56,7 @@ void draw() {
     int atStep = tabla.stepTime();
     soundManager.reportBeat(atStep); // PARA AVISAR CUANDO CAMBIA EL BEAT
     oscManager.reportBeat(atStep);
-    arduino.sendBeat(tabla.atStep);
+    //arduino.sendBeat(tabla.atStep);
   }
   tempo.renderTapButton();
 
