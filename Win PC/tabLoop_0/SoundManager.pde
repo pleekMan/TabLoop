@@ -82,12 +82,12 @@ class SoundManager {
 
     volumes =_volumes;
 
-    String finalPath = dataPath("") + "/" + folder +"/"; // MAC OS
-    //String finalPath = dataPath("") + "\\" + folder +"\\"; // WINDOWS OS
+    //String finalPath = dataPath("") + "/" + folder +"/"; // MAC OS
+    String finalPath = dataPath("") + "\\" + folder +"\\"; // WINDOWS OS
     //String[] fileNames = listFileNames(finalPath);
 
     for (int i=0; i < fileNames.length; i++) {
-      println("-|| FilePath: " + finalPath + fileNames[i]);
+      println("-|| OPENING > FilePath: " + finalPath + fileNames[i]);
       AudioSample newSound = minim.loadSample(finalPath + fileNames[i]);
       newSound.setGain(volumes[i]);
       sounds.add(newSound);

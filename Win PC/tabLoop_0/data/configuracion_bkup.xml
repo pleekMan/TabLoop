@@ -206,16 +206,16 @@
   </computerVision>
   <sound>
     <channels>
-      <channel channel="0" fileName="kitAcustico1\DrumHit05.wav" id="0"/>
-      <channel channel="1" fileName="kitAcustico1\Dry Ring Snare.wav" id="1"/>
-      <channel channel="2" fileName="kitAcustico1\ClosedHatPaiste1.wav" id="2"/>
-      <channel channel="3" fileName="kitAcustico1\DrumHit05.wav" id="3"/>
-      <channel channel="4" fileName="kitAcustico1\Cowbell1.wav" id="4"/>
-      <channel channel="5" fileName="meloSint\4_sint-faSost-1.wav" id="5"/>
-      <channel channel="6" fileName="meloSint\3_sint-re-1.wav" id="6"/>
-      <channel channel="7" fileName="meloSint\2_sint-la-0.wav" id="7"/>
-      <channel channel="8" fileName="meloSint\1_sint-mi-0.wav" id="8"/>
-      <channel channel="9" fileName="meloSint\0_sint-si-0.wav" id="9"/>
+      <channel channel="0" fileName="Kick 1 YamahaEQ2.wav" id="0"/>
+      <channel channel="1" fileName="Dry Ring Snare.aif" id="1"/>
+      <channel channel="2" fileName="Closed Hat Paiste 1.wav" id="2"/>
+      <channel channel="3" fileName="Drum Hit03.wav" id="3"/>
+      <channel channel="4" fileName="Shut_Down7.wav" id="4"/>
+      <channel channel="5" fileName="guit_si-0.wav" id="5"/>
+      <channel channel="6" fileName="guit_re-0.wav" id="6"/>
+      <channel channel="7" fileName="guit_mi-0.wav" id="7"/>
+      <channel channel="8" fileName="guit_faSost-0.wav" id="8"/>
+      <channel channel="9" fileName="guit_la-0.wav" id="9"/>
     </channels>
   </sound>
 </configuracion>

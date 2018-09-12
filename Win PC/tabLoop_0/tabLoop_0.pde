@@ -434,7 +434,7 @@ void crearControles() {
     .setLabel("TEMPO (BPM)")
     .setPosition(900, 580)
     .setSize(35, 35)
-    .setRange(60, 250)
+    .setRange(80, 400)
     .setNumberOfTickMarks(6)
     .snapToTickMarks(false)
     .setValue(tempo.getBPM());

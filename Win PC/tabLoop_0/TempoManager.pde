@@ -22,7 +22,7 @@ public class TempoManager {
     timer = new Timer();
 
     beatDivision = 4; // 1 = ON QUARTER NOTE (NEGRA) -> LO NORMAL
-    setBPM(60);
+    setBPM(100);
     onBeat = false;
 
     beatMarkerPos = new PVector(758, 596);

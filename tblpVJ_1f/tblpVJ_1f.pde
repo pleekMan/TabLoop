@@ -49,13 +49,16 @@ PShape[] heroinas;
 
 OscP5 oscComm;
 
-void settings(){
- fullScreen(P3D,2); 
+void settings() {
+  fullScreen(P3D, 2);
 }
 
 void setup() {
   //size(1024, 768, P3D);
   //size(640,480, P3D);
+
+  frameRate(25);
+
   ortho();
   //camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0+100, -height, 0, 0, 1, 0);
 
@@ -229,17 +232,16 @@ void keyPressed() {
 void triggerHeroina(int i) {
 
 
-    surcos[i].offSetTimeZ = millis()*-1.0;
-    //println("surcos["+i+"].offSetTimeZ: "+surcos[i].offSetTimeZ);
-    surcos[i].velSubida = 9;
-    //println("surcos[i].velSubida: "+surcos[i].velSubida);
-    surcos[i].volando = true;
-    surcos[i].estaHeroina = heroinas[int(random(10))];
-    surcos[i].estaHeroina.setVisible(true);
+  surcos[i].offSetTimeZ = millis()*-1.0;
+  //println("surcos["+i+"].offSetTimeZ: "+surcos[i].offSetTimeZ);
+  surcos[i].velSubida = 9;
+  //println("surcos[i].velSubida: "+surcos[i].velSubida);
+  surcos[i].volando = true;
+  surcos[i].estaHeroina = heroinas[int(random(10))];
+  surcos[i].estaHeroina.setVisible(true);
 
-    //surcos[i].tamanioBox = surcos[i].ancho*12;
-    surcos[i].cambiar();
-  
+  //surcos[i].tamanioBox = surcos[i].ancho*12;
+  surcos[i].cambiar();
 }
 
 /// ----- OSC STUFF\
@@ -250,6 +252,6 @@ void oscEvent(OscMessage theOscMessage) {
   //println(" typetag: "+theOscMessage.typetag());
   int inValue = theOscMessage.get(0).intValue();
   //println(" || VALUE: " + inValue );
-  
+
   triggerHeroina(inValue);
 }
