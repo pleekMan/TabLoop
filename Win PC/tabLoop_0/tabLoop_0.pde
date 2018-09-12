@@ -43,34 +43,12 @@ void setup() {
   controles = new ControlP5(this);
   crearControles();
 
-  /*
-  println("-|| Serial COMs available: ");
-   printArray(Serial.list());
-   String portName = Serial.list()[0];
-   port = new Serial(this, portName, 9600);
-   port.clear();
-   */
   fondo = loadImage("tabLoop_back.png");
 }
 
 
 void draw() {
   background(fondo);
-
-  if (tempo.isOnBeat()) {
-    //byte[] toSend = {(byte)tabla.atStep};
-    //port.write((byte)tabla.atStep);
-
-    //println("|-> " + char(tabla.atStep + 48));
-    //port.clear();
-  }
-  /*
-  if ( port.available() > 0) {
-   int inValue = port.read();
-   println("->| " + inValue);
-   }
-   */
-
 
   // TEMPO STUFF
   tempo.update();
@@ -79,8 +57,6 @@ void draw() {
     soundManager.reportBeat(atStep); // PARA AVISAR CUANDO CAMBIA EL BEAT
     oscManager.reportBeat(atStep);
     arduino.sendBeat(tabla.atStep);
-    //port.write(atStep);
-    //println("|-> " + tabla.atStep);
   }
   tempo.renderTapButton();
 
@@ -128,7 +104,7 @@ void detectGridInTable() {
 
       // TRIGGER TRACK AUDIO
       if ((beat == tabla.atStep) && isOn) {
-        //soundManager.triggerSound(track);
+        soundManager.triggerSound(track);
         oscManager.sendTrack(track);
       }
     }

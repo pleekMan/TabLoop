@@ -10,10 +10,10 @@ class ArduinoManager {
 
   ArduinoManager(PApplet p5) {
 
-    //println("-|| Serial COMs available: ");
-    //printArray(Serial.list());
+    println("-|| Arduino >> Serial COMs available: ");
+    printArray(Serial.list());
 
-    arduino = new Arduino(p5, Arduino.list()[9], 57600);
+    arduino = new Arduino(p5, Arduino.list()[0], 57600);
     for (int i = 0; i <= 53; i++)arduino.pinMode(i, Arduino.OUTPUT); // ARDUINO MEGA
   }
 

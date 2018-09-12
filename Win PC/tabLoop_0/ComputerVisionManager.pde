@@ -87,7 +87,7 @@ class ComputerVisionManager {
 
     opencv.brightness(brillo);
     opencv.contrast(contraste);
-    contrastBrightnessImage = opencv.getOutput().copy();
+    //contrastBrightnessImage = opencv.getOutput().copy();
 
     opencv.threshold(umbral);
     opencv.invert();
@@ -135,7 +135,7 @@ class ComputerVisionManager {
     image(binaryImage, binaryImagePos.x, binaryImagePos.y, binaryImage.width * binaryImageScale, binaryImage.height * binaryImageScale);
 
     // BRILLO / CONTRASTE
-    image(contrastBrightnessImage, rawImagePos.x, rawImagePos.y + (videoIn.height * rawImageScale), videoIn.width * rawImageScale, videoIn.height * rawImageScale);
+    //image(contrastBrightnessImage, rawImagePos.x, rawImagePos.y + (videoIn.height * rawImageScale), videoIn.width * rawImageScale, videoIn.height * rawImageScale);
 
 
     // DIBUJAR CONTORNO DE LA IMAGEN

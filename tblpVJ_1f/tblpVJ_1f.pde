@@ -49,10 +49,13 @@ PShape[] heroinas;
 
 OscP5 oscComm;
 
+void settings(){
+ fullScreen(P3D,2); 
+}
 
 void setup() {
   //size(1024, 768, P3D);
-  size(640,480, P3D);
+  //size(640,480, P3D);
   ortho();
   //camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0+100, -height, 0, 0, 1, 0);
 
@@ -242,11 +245,11 @@ void triggerHeroina(int i) {
 /// ----- OSC STUFF\
 // THIS WORKS IF OUT AND IN PORTS ARE THE SAME (DEBUGGING ON SAME COMPUTER)
 void oscEvent(OscMessage theOscMessage) {
-  print("### received an osc message.");
-  print(" addrpattern: "+theOscMessage.addrPattern());
-  println(" typetag: "+theOscMessage.typetag());
+  //print("### received an osc message.");
+  //print(" addrpattern: "+theOscMessage.addrPattern());
+  //println(" typetag: "+theOscMessage.typetag());
   int inValue = theOscMessage.get(0).intValue();
-  println(" || VALUE: " + inValue );
+  //println(" || VALUE: " + inValue );
   
   triggerHeroina(inValue);
 }

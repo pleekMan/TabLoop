@@ -6,28 +6,28 @@
       <corner x="638" y="479"/>
     </boundingBox>
     <controlCorners>
-      <point id="0" x="0.0846395" y="0.18997912"/>
-      <point id="1" x="0.94043887" y="0.08350731"/>
-      <point id="2" x="0.9075235" y="0.83716077"/>
-      <point id="3" x="0.061128527" y="0.6764092"/>
+      <point id="0" x="0.18808778" y="0.17536534"/>
+      <point id="1" x="0.9231975" y="0.19832985"/>
+      <point id="2" x="0.8573668" y="0.78914404"/>
+      <point id="3" x="0.1630094" y="0.59707725"/>
     </controlCorners>
     <stepwiseOffset>
-      <point offset="0.0"/>
-      <point offset="-0.024122223"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
-      <point offset="0.0"/>
+      <point offset="-0.004873976"/>
+      <point offset="-0.020864904"/>
+      <point offset="-0.037136897"/>
+      <point offset="-0.052824855"/>
+      <point offset="-0.06780061"/>
+      <point offset="-0.071626216"/>
+      <point offset="-0.088861376"/>
+      <point offset="-0.09058139"/>
+      <point offset="-0.096784145"/>
+      <point offset="-0.08444539"/>
+      <point offset="-0.085829675"/>
+      <point offset="-0.0848698"/>
+      <point offset="-0.06703442"/>
+      <point offset="-0.057286322"/>
+      <point offset="-0.042075276"/>
+      <point offset="-0.021731853"/>
     </stepwiseOffset>
     <pointsOffset>
       <point id="0" x="0.0" y="0.0"/>
@@ -189,18 +189,18 @@
       <point id="156" x="0.0" y="0.0"/>
       <point id="157" x="0.0" y="0.0"/>
       <point id="158" x="0.0" y="0.0"/>
-      <point id="159" x="0.0" y="0.0"/>
+      <point id="159" x="0.013284385" y="-0.0059461594"/>
     </pointsOffset>
     <perspectiveCorrection value="0.5"/>
-    <tempo value="60"/>
+    <tempo value="133"/>
   </grid>
   <computerVision>
-    <kernelSize value="9"/>
+    <kernelSize value="15"/>
     <kernelMode value="0"/>
-    <binaryThreshold value="0.27058825"/>
-    <brightness value="0.011764706"/>
-    <contrast value="0.7214286"/>
-    <dilatePasses value="0"/>
+    <binaryThreshold value="0.0"/>
+    <brightness value="-0.25490198"/>
+    <contrast value="0.46428573"/>
+    <dilatePasses value="3"/>
     <erodePasses value="0"/>
     <enableAdaptiveBinarization value="0"/>
   </computerVision>
