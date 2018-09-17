@@ -1,10 +1,10 @@
 
 --| BATERIA ROCK ACUSTICA
 
-<channel channel="0" fileName="kitAcustico1\DrumHit05.wav" id="0"/>
+<channel channel="0" fileName="kitAcustico1\Kick Burst.wav" id="0"/>
 <channel channel="1" fileName="kitAcustico1\Dry Ring Snare.wav" id="1"/>
 <channel channel="2" fileName="kitAcustico1\ClosedHatPaiste1.wav" id="2"/>
-<channel channel="3" fileName="kitAcustico1\DrumHit05.wav" id="3"/>
+<channel channel="3" fileName="kitAcustico1\HiHatAbierto.wav" id="3"/>
 <channel channel="4" fileName="kitAcustico1\Cowbell1.wav" id="4"/>
 
 --| BATERIA ELECTRONICA

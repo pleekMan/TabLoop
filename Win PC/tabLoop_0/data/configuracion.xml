@@ -6,16 +6,24 @@
       <corner x="638" y="479"/>
     </boundingBox>
     <controlCorners>
+<<<<<<< HEAD
       <point id="0" x="0.09247649" y="0.11273486"/>
       <point id="1" x="0.8181818" y="0.19624217"/>
       <point id="2" x="0.7476489" y="0.7599165"/>
       <point id="3" x="0.05642633" y="0.5490605"/>
+=======
+      <point id="0" x="0.10815047" y="0.13152401"/>
+      <point id="1" x="0.830721" y="0.20041753"/>
+      <point id="2" x="0.7601881" y="0.7724426"/>
+      <point id="3" x="0.07053292" y="0.56367433"/>
+>>>>>>> 7be879a85c2a2f07b7ffc677759b387737f19f7a
     </controlCorners>
     <stepwiseOffset>
       <point offset="-0.004873976"/>
       <point offset="-0.018114068"/>
       <point offset="-0.03977827"/>
       <point offset="-0.052824855"/>
+<<<<<<< HEAD
       <point offset="-0.06252639"/>
       <point offset="-0.06028022"/>
       <point offset="-0.07199776"/>
@@ -28,6 +36,20 @@
       <point offset="-0.035701632"/>
       <point offset="-0.018140554"/>
       <point offset="-0.004590869"/>
+=======
+      <point offset="-0.06780061"/>
+      <point offset="-0.071626216"/>
+      <point offset="-0.076681554"/>
+      <point offset="-0.08192927"/>
+      <point offset="-0.07773155"/>
+      <point offset="-0.07713458"/>
+      <point offset="-0.07426679"/>
+      <point offset="-0.06251055"/>
+      <point offset="-0.05719781"/>
+      <point offset="-0.03831631"/>
+      <point offset="-0.018438041"/>
+      <point offset="-0.007264912"/>
+>>>>>>> 7be879a85c2a2f07b7ffc677759b387737f19f7a
     </stepwiseOffset>
     <pointsOffset>
       <point id="0" x="0.0" y="0.0"/>
@@ -192,7 +214,11 @@
       <point id="159" x="0.0" y="0.0"/>
     </pointsOffset>
     <perspectiveCorrection value="0.5"/>
+<<<<<<< HEAD
     <tempo value="289"/>
+=======
+    <tempo value="195"/>
+>>>>>>> 7be879a85c2a2f07b7ffc677759b387737f19f7a
   </grid>
   <computerVision>
     <kernelSize value="13"/>
@@ -206,8 +232,13 @@
   </computerVision>
   <sound>
     <channels>
+<<<<<<< HEAD
       <channel channel="0" fileName="kitElectronico\Kick2.wav" id="0"/>
       <channel channel="1" fileName="kitAcustico1\Dry Ring Snare.wav" id="1"/>
+=======
+      <channel channel="0" fileName="kitAcustico1\Kick Burst.wav" id="0"/>
+      <channel channel="1" fileName="kitElectronico\Clap.wav" id="1"/>
+>>>>>>> 7be879a85c2a2f07b7ffc677759b387737f19f7a
       <channel channel="2" fileName="kitAcustico1\ClosedHatPaiste1.wav" id="2"/>
       <channel channel="3" fileName="kitAcustico1\HiHatAbierto.wav" id="3"/>
       <channel channel="4" fileName="kitAcustico1\Cowbell1.wav" id="4"/>
