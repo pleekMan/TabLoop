@@ -23,14 +23,9 @@ class ArduinoManager {
     //println("|-> " + beat);
     //selectedPin = beat % ledPins.length; // TEST CON MENOS LEDS
 
-<<<<<<< HEAD
-    selectedPin = (beat + ledPins.length) % ledPins.length; // EN LA PRACTICA SE DESFAZA 1
-
-=======
     selectedPin = (beat + ledPins.length ) % ledPins.length; // EN LA PRACTICA SE DESFAZA 1
     //selectedPin = beat;
     
->>>>>>> 7be879a85c2a2f07b7ffc677759b387737f19f7a
     for (int i = 0; i < ledPins.length; i++) {
       arduino.digitalWrite(ledPins[i], Arduino.LOW);
     }
