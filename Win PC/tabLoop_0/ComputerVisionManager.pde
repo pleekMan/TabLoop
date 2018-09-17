@@ -33,8 +33,8 @@ class ComputerVisionManager {
 
     String[] cameras = Capture.list();
     //videoIn = new Capture(p5, 1280, 960); // RESOLUCION NATIVA DE Logitech C270
-    videoIn = new Capture(p5, 640, 480); // DEFAULT CAMERA
-    //videoIn = new Capture(p5, 1280, 960, cameras[61]); // WORKING WEB-CAM ON LAPTOP
+    //videoIn = new Capture(p5, 640, 480); // DEFAULT CAMERA
+    videoIn = new Capture(p5, 1280, 960, cameras[61]); // WORKING WEB-CAM ON LAPTOP
 
     videoIn.start();
 
@@ -87,7 +87,7 @@ class ComputerVisionManager {
 
     opencv.brightness(brillo);
     opencv.contrast(contraste);
-    //contrastBrightnessImage = opencv.getOutput().copy();
+    if (!isCamImageMinimized)contrastBrightnessImage = opencv.getOutput().copy();
 
     opencv.threshold(umbral);
     opencv.invert();
@@ -114,7 +114,7 @@ class ComputerVisionManager {
 
     if (!isCamImageMinimized) {
       // MODO DEBUG
-      rawImageScale = 0.25;
+      rawImageScale = 0.15;
       binaryImageScale = 0.5;
       binaryImagePos.set(0, 0);
       rawImagePos.set(binaryImagePos.x + (binaryImage.width * binaryImageScale), 0);
@@ -127,15 +127,17 @@ class ComputerVisionManager {
     }
 
 
+    if (isCamImageMinimized) {
+      // IMAGEN DE ENTRADA (escala2)
+      image(videoIn, rawImagePos.x, rawImagePos.y, videoIn.width * rawImageScale, videoIn.height * rawImageScale);
 
-    // IMAGEN DE ENTRADA (escala2)
-    image(videoIn, rawImagePos.x, rawImagePos.y, videoIn.width * rawImageScale, videoIn.height * rawImageScale);
+      // BRILLO / CONTRASTE
+      image(contrastBrightnessImage, rawImagePos.x, rawImagePos.y + (videoIn.height * rawImageScale), videoIn.width * rawImageScale, videoIn.height * rawImageScale);
+    }
 
     // IMAGEN OPERADA (escala1)
     image(binaryImage, binaryImagePos.x, binaryImagePos.y, binaryImage.width * binaryImageScale, binaryImage.height * binaryImageScale);
 
-    // BRILLO / CONTRASTE
-    //image(contrastBrightnessImage, rawImagePos.x, rawImagePos.y + (videoIn.height * rawImageScale), videoIn.width * rawImageScale, videoIn.height * rawImageScale);
 
 
     // DIBUJAR CONTORNO DE LA IMAGEN

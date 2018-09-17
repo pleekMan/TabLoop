@@ -13,7 +13,7 @@ class ArduinoManager {
     println("-|| Arduino >> Serial COMs available: ");
     printArray(Serial.list());
 
-    arduino = new Arduino(p5, Arduino.list()[0], 57600);
+    arduino = new Arduino(p5, Arduino.list()[1], 57600);
     for (int i = 0; i <= 53; i++)arduino.pinMode(i, Arduino.OUTPUT); // ARDUINO MEGA
   }
 
@@ -23,7 +23,7 @@ class ArduinoManager {
     //println("|-> " + beat);
     //selectedPin = beat % ledPins.length; // TEST CON MENOS LEDS
 
-    selectedPin = (beat - 1) % ledPins.length; // EN LA PRACTICA SE DESFAZA 1
+    selectedPin = (beat + ledPins.length) % ledPins.length; // EN LA PRACTICA SE DESFAZA 1
 
     for (int i = 0; i < ledPins.length; i++) {
       arduino.digitalWrite(ledPins[i], Arduino.LOW);
